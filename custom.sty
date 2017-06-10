@@ -1,0 +1,190 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{custom}[2015/11/09 My custom package]
+\RequirePackage[english]{babel}
+\RequirePackage[T1]{fontenc}
+%\RequirePackage{lmodern} % Not good with metropolis
+\RequirePackage{todonotes}
+\RequirePackage{xifthen}
+\RequirePackage{todonotes}
+
+\RequirePackage{graphicx}
+\RequirePackage{epstopdf}
+
+\RequirePackage{longtable}
+\RequirePackage{tabu}
+
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+% http://tex.stackexchange.com/questions/43835/conflict-between-amsthm-and-some-other-package
+\let\proof\relax
+\let\endproof\relax
+\RequirePackage{amsthm}
+\RequirePackage{caption}
+\RequirePackage{subcaption}
+\RequirePackage{multirow}
+
+\RequirePackage{algorithm}
+\RequirePackage{algorithmic}
+
+\RequirePackage{tkz-graph}
+\RequirePackage{tikz}
+
+\RequirePackage{url}
+
+\usetikzlibrary{arrows,matrix,decorations.pathreplacing,positioning,chains,fit,shapes,calc,3d}
+
+\newcommand{\bigoh}{\mathcal{O}}
+
+\DeclareMathOperator{\newdiff}{d} % use \dif instead
+\newcommand{\dif}{\newdiff\!}
+\newcommand{\fdif}[2]{\frac{\dif #1}{\dif #2}}
+\newcommand{\fpart}[2]{\frac{\partial #1}{\partial #2}}
+
+\newcommand{\vertiii}[1]{{\left\vert\kern-0.25ex\left\vert\kern-0.25ex\left\vert #1
+    \right\vert\kern-0.25ex\right\vert\kern-0.25ex\right\vert}}
+
+
+\newcommand{\Sect}{Section~}
+\newcommand{\eqdef}{\triangleq}
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\Exp}{\mathbb{E}}
+%\newcommand{\iff}{\Leftrightarrow}
+\newcommand{\tup}{tuple}
+\newcommand{\tups}{tuples}
+\newcommand{\ktup}[1]{$#1$-tuple}
+\newcommand{\ktups}[1]{$#1$-tuples}
+\newcommand{\grad}{\nabla}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\newcommand{\enorm}[1]{\norm{#1}_2}
+\newcommand{\Sn}{\mathbb{S}^{n-1}}
+\newcommand{\dirac}[1]{\delta_{#1}}
+\newcommand{\pushf}[2]{{#1}\#{#2}}
+\newcommand{\dist}[2]{d(#1, #2)}
+
+% Opti
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\mini}{minimize}
+\DeclareMathOperator*{\maxi}{maximize}
+\DeclareMathOperator*{\subto}{\text{subject to}\quad}
+\newcommand{\opt}[1]{{#1}^\star}
+
+% Convex Analysis
+\newcommand{\stdsimplex}[1]{\Delta^{#1}}
+
+% Sets
+\newcommand{\setbuild}[2]{\{\, #1 \mid #2 \,\}}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\vol}{vol}
+\DeclareMathOperator{\cl}{cl}
+\DeclareMathOperator{\relint}{ri}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\inte}{int}
+\DeclareMathOperator{\aff}{aff}
+\DeclareMathOperator{\cone}{cone}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\ray}{ray}
+\DeclareMathOperator{\proj}{proj}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+%\newcommand{\Rn}{\R^n}
+%\newcommand{\Rnn}{\R^{n \times n}}
+\newcommand{\SymK}{\mathcal{S}^n}
+\newcommand{\Pd}{\SymK_+}
+\newcommand{\Psd}{\SymK_{++}}
+\newcommand{\Rh}{\R_{\mathbf{2d}}}
+\newcommand{\Rhd}{\Rh^*}
+\newcommand{\Sos}[1][2d]{\Sigma_{#1}}
+\newcommand{\Sosh}[1][2d]{\Sigma_{\mathbf{#1}}}
+\newcommand{\Soshd}[1][2d]{\Sosh[#1]^*}
+\newcommand{\vero}{\mathcal{V}_{\mathbf{2d}}}
+\newcommand{\Fb}{\mathcal{B}}
+\newcommand{\Fbp}{\Fb_+}
+\newcommand{\Fbd}{\mathcal{M}}
+\newcommand{\Fbpd}{\Fbd_+}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Fp}{\F_+}
+\newcommand{\Fpp}{\F_{++}}
+\newcommand{\Ind}[1]{\mathbf{1}_{#1}}
+
+% SOS
+\newcommand{\pE}{\widetilde{\mathbb{E}}}
+\newcommand{\pmu}{\widetilde{\mu}}
+\newcommand{\issos}{\text{ is SOS}}
+
+% Matrix
+\DeclareMathOperator{\BlockDiag}{BlockDiag}
+\newcommand{\Tr}{\top}
+\newcommand{\1}{\mathbf{1}}
+\DeclareMathOperator{\Diag}{Diag}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Image}{Im}
+\DeclareMathOperator{\Kernel}{Ker}
+\DeclareMathOperator{\trace}{Tr}
+\newcommand{\kron}{\otimes}
+\newcommand{\elli}[2]{\la #1 #2, #2 \ra}
+
+% Graph
+\newcommand{\Nodes}{V}
+\newcommand{\node}{node}
+\newcommand{\nodes}{nodes}
+\newcommand{\Arcs}{E}
+\newcommand{\Arcsin}[1][\Arcs]{{#1}^-}
+\newcommand{\Arcsout}[1][\Arcs]{{#1}^+}
+\newcommand{\arc}{edge}
+\newcommand{\arcs}{edges}
+\newcommand{\din}{d^{-}}
+\newcommand{\mdin}{\Delta^{-}}
+\newcommand{\dout}{d^{+}}
+\newcommand{\mdout}{\Delta^{+}}
+
+% Theorems and definitions
+\theoremstyle{definition}
+\newtheorem{myprop}{Proposition}
+\newcommand{\propref}[1]{Proposition~\ref{prop:#1}}
+\newtheorem{mytheo}{Theorem}
+\newcommand{\theoref}[1]{Theorem~\ref{theo:#1}}
+\newtheorem{mylem}{Lemma}
+\newcommand{\lemref}[1]{Lemma~\ref{lem:#1}}
+\newtheorem{myconj}{Conjecture}
+\newtheorem{myprob}{Problem}
+\newtheorem{mycons}{Constraint}
+\newtheorem{mycoro}{Corollary}
+\newcommand{\cororef}[1]{Corollary~\ref{coro:#1}}
+\newtheorem{mydef}{Definition}
+\newcommand{\defref}[1]{Definition~\ref{def:#1}}
+\newtheorem{myexem}{Example}
+\newcommand{\exemref}[1]{Example~\ref{exem:#1}}
+\newtheorem{myrem}{Remark}
+\newtheorem{myprog}{Program}
+\newcommand{\progref}[1]{Program~\ref{prog:#1}}
+\newtheorem{myassu}{Assumption}
+\newtheorem{myopen}{Open Question}
+
+\newcommand{\chapref}[1]{Chapter~\ref{chap:#1}}
+\newcommand{\secref}[1]{Section~\ref{sec:#1}}
+\newcommand{\algoref}[1]{Algorithm~\ref{algo:#1}}
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\appref}[1]{\ref{app:#1}}
+
+\newcommand{\hrep}{H-representation}
+\newcommand{\vrep}{V-representation}
+\newcommand{\rrep}{R-representation}
+
+\newcommand{\Cset}{\mathcal{C}}
+\newcommand{\Fset}{\mathcal{F}}
+\newcommand{\Gset}{\mathcal{G}}
+\newcommand{\Kset}{\mathcal{K}}
+\newcommand{\Pset}{\mathcal{P}}
+\newcommand{\Sset}{\mathcal{S}}
+\newcommand{\Tset}{\mathcal{T}}
+\newcommand{\Uset}{\mathcal{U}}
+\newcommand{\polar}[1]{{#1}^\circ}
+\newcommand{\dual}[1]{{#1}^*}
+
+% Julia
+\newcommand{\jlpkg}[1]{\texttt{#1.jl}}
+
+\endinput
