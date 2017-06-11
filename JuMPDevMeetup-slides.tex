@@ -100,7 +100,7 @@
       \node at (3, -3.5) {$X^\Tr \begin{pmatrix}1 & 1 & 0\\0 & 2 & 1\end{pmatrix}^\Tr \begin{pmatrix}1 & 1 & 0\\0 & 2 & 1\end{pmatrix} X$};
     \end{tikzpicture}
   \end{frame}
-  \begin{frame}{When is nonnegativity equivalent to sum of squares ?} 
+  \begin{frame}{When is nonnegativity equivalent to sum of squares ?}
     \begin{block}{Hilbert 1888}
       Nonnegativity of $p(x)$ of $n$ variables and degree $2d$ is equivalent to sum of squares in the following three cases:
       \begin{itemize}
@@ -211,12 +211,152 @@
     Choose \verb|TypedPolynomials| or \verb|DynamicPolynomials|:
 \begin{minted}{Julia}
 using TypedPolynomials
-@polyvar x y
+@polyvar y # variable with name y
+@polyvar x[1:2] # tuple of variables with names x1, x2
 \end{minted}
     Build a polynomial from scratch:
 \begin{minted}{Julia}
-using TypedPolynomials
 motzkin = x^4*y^2 + x^2*y^4 + 1 - 3x^2*y^2
 \end{minted}
+    Build a vector of monomials:
+\begin{minted}{Julia}
+monomials(x, 2) # -> [x1^2, x1*x2, x2^2]
+monomials(x, 0:2) # -> [x1^2, x1*x2, x2^2, x1, x2, 1]
+\end{minted}
+  \end{frame}
+  \begin{frame}[fragile]
+    \frametitle{PolyJuMP}
+    \begin{block}{Constraint}
+\begin{minted}{Julia}
+m = Model()
+@variable m a
+@constraint a * x^2 - 2x*y + a * y^2 >= 0
+\end{minted}
+    \end{block}
+    \begin{block}{Variable}
+\begin{minted}{Julia}
+m = Model()
+X = monomials([x, y], 0:2)
+@variable m p Poly(X)
+@constraint m p >= 1 # p should be strictly positive
+@constraint m p * motzkin >= 0
+solve(m)
+\end{minted}
+    finds $p(x) = 0.9x^2 + 0.9y^2 + 2$.
+    \end{block}
+  \end{frame}
+  \begin{frame}[fragile]
+    \frametitle{A module and and a solver}
+    \begin{block}{Module}
+    PolyJuMP needs a polymodule:
+\begin{minted}{Julia}
+m = Model()
+setpolymodule!(m, SumOfSquares)
+\end{minted}
+    \alert{equivalent} shortcut:
+\begin{minted}{Julia}
+m = SOSModel()
+\end{minted}
+    2 lines version useful if multiple JuMP extensions used !
+    \end{block}
+    \begin{block}{Solver}
+      Sum-of-squares variables/constraints needs SDP solver, e.g. Mosek, SDPA, CSDP, SCS, ...
+
+      DSOS only need LP solver and SDSOS only need SOCP solver !
+    \end{block}
+  \end{frame}
+  \begin{frame}[fragile]
+    \frametitle{Domain constraint}
+    \begin{block}{Algebraic Set}
+      Finite intersection of algebraic equalities:
+\begin{minted}{Julia}
+@set x^2 = y^3 + z^3 && 2x^2 + 3y*z == x^3z^2
+\end{minted}
+    \end{block}
+    \begin{block}{Basic semialgebraic set}
+      Finite intersection of algebraic equalities and inequalities:
+\begin{minted}{Julia}
+@set xz >= y^2 && x + z == 1
+\end{minted}
+    \end{block}
+    \begin{columns}
+      \begin{column}{0.5\textwidth}
+\begin{minted}{Julia}
+S = @set x^2 + y^2 == 1
+@constraint(m, x^2 + y <= 10,
+            domain = S)
+\end{minted}
+    finds $(3-y/6)^2 + 35/36y^2$.
+      \end{column}
+      \begin{column}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.7\textwidth]{algebraic_set.png}
+      \end{column}
+    \end{columns}
+  \end{frame}
+  \begin{frame}[fragile]
+    \frametitle{SOS (resp. DSOS and SDSOS)}
+    \begin{block}{Variable}
+      Variable $p(x) = X^\Tr Q X$ where $Q$ is semidefinite (resp. diagonally dominant, scaled diagonaly dominant).
+\begin{minted}{Julia}
+@variable m p SOSPoly(X)
+@variable m p DSOSPoly(X)
+@variable m p SDSOSPoly(X)
+\end{minted}
+    \end{block}
+    \begin{block}{Constraint}
+\begin{minted}{Julia}
+@constraint m p in SOSCone()
+@constraint m p in DSOSCone()
+@constraint m p in SDSOSCone()
+\end{minted}
+    \end{block}
+  \end{frame}
+  \begin{frame}[fragile]
+    \frametitle{Application : Polynomial optimization}
+      Find $\min_{x \in S} p(x)$, e.g.
+\begin{minted}{Julia}
+p = x^3 - x^2 + 2x*y - y^2 + y^3
+S = @set x >= 0 && y >= 0 && x + y >= 1
+\end{minted}
+% See Lassere's book pp. 30-31
+      SOS program:
+\begin{minted}{Julia}
+m = SOSModel()
+@variable m lb
+@objective m Max lb
+constr = @constraint m p >= lb, domain = S
+\end{minted}
+      How to recover the minimizer ?
+      Get the dual $\mu$ and check whether it is atomic, i.e.
+      \( \mu = \sum_i \lambda_i \delta_{x_i} \).
+\begin{minted}{Julia}
+AtomicMeasure(getdual(constr))
+\end{minted}
+      Atomic $\Rightarrow$ $x_i$ global minimizers and \verb|lb| exact minimum.
+  \end{frame}
+  \begin{frame}[fragile]
+    \frametitle{Application : Stability of Switched Systems}
+      System $x_{k+1} = A_1x_k$ or $x_{k+1} = A_2x_k$.
+      Find a common Lyapunov $V(x)$ such that $V(x) > 0$, $V(A_1x) \leq V(x)$ and $V(A_2x) \leq V(x)$.
+\begin{minted}{Julia}
+m = SOSModel()
+X = monomials(x, 2*d)
+@variable m V Poly(X)
+@constraint m p >= sum(x.^2)
+@constraint constr[i=1:2] m p(x=>A[i]*x) <= p
+\end{minted}
+      How to recover an unstability certificate if it is infeasible ?
+\begin{minted}{Julia}
+AtomicMeasure.(getdual(constr))
+\end{minted}
+      Atomic $\Rightarrow$ $\mu_i$ occupation measure of unstable trajectory\footnote{See \jlpkg{SwitchedSystems}}.
+  \end{frame}
+  \begin{frame}{Future work}
+    \begin{itemize}
+      \item Symmetry reduction.
+      \item Modelisation with measures.
+      \item Inclusion of decision variables in semialgebraic sets using moment relaxation.
+    \end{itemize}
   \end{frame}
 \end{document}
