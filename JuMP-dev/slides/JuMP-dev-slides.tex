@@ -2,6 +2,7 @@
 \usetheme{metropolis}
 %\setbeamersize{text margin left=.2cm,text margin right=.2cm}
 \usepackage{graphicx}
+\graphicspath{{../../images/}}
 % \usepackage[french]{babel}
 %\usepackage{listings}
 %\usepackage{lipsum}
@@ -11,7 +12,7 @@
 \usepackage{wrapfig}
 \usepackage{tkz-graph}
 \usepackage{tikz}
-\usepackage{chngcntr}
+%\usepackage{chngcntr}
 \usepackage[labelformat=empty]{caption}
 \usepackage[official]{eurosym}
 
@@ -29,10 +30,10 @@
 \newcommand{\Adj}{\mathbf{A}}
 \usepackage{mathtools}
 
-\usepackage{custom}
+\usepackage{../../custom}
 \usepackage{amsfonts}
-\newcommand{\jsrcodepath}{../../code}
-\usepackage{jsr}
+%\newcommand{\jsrcodepath}{../../code}
+%\usepackage{jsr}
 
 \newcommand{\expe}[2]{\la #1, #2 \ra}
 
@@ -58,6 +59,10 @@
 \institute{Universit\'e catholique de Louvain (UCL)\\
            Massachusetts Institute of Technology (MIT)}
 
+% https://tex.stackexchange.com/questions/426088/texlive-pretest-2018-beamer-and-subfig-collide
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
 \begin{document}
   \maketitle
   \begin{frame}{Nonnegative quadratic forms into sum of squares}
