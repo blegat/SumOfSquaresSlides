@@ -1,0 +1,6 @@
+# TeX generated files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
