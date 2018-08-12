@@ -195,4 +195,27 @@
 % Julia
 \newcommand{\jlpkg}[1]{\texttt{#1.jl}}
 
+% JuMP command inspired on the \TeX command source code
+\makeatletter %% access private macros
+\newcommand{\JuMP}
+{
+J%% print an J
+{%% open a group
+  \sbox \z@ T%% load box 0 with a T
+  \vbox to\ht \z@ {%% start a vertical box as high as box 0
+    \hbox {% start a horizontal box
+      \check@mathfonts%% ensure the math fonts sizes are set up at the current font size
+      %\fontsize \sf@size \z@%% use the established font size for sub/superscripts
+      \math@fontsfalse%% don't bother setting up all the math fonts for the new current size
+      \selectfont%% select the font
+      u%% print an A
+    }%% finish the horizontal box
+    \vss%% fill up the stated height
+  }%% finish the \vbox
+}%% end the group
+MP
+}
+\makeatother%% no more private macros allowed
+
+
 \endinput
