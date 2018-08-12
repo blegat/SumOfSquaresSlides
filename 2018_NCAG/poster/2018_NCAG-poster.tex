@@ -337,7 +337,7 @@ S = @set x >= 0 && y >= 0 && x + y >= 1
   \end{tikzpicture}
   \end{center}
   \begin{description}
-    \item[\textbf{Bridging}] Automatic reformulation of a constraint into an equivalent
+    \item[\textbf{\textcolor{jblue!85}{Bridging}}] Automatic reformulation of a constraint into an equivalent
       form supported by the solver, e.g. quadratic constraint into second-order
       cone constraint. In particular, reformulates SOS/WSOS constraints
       into PSD constraints. An interior-point solver that natively supports
@@ -345,7 +345,7 @@ S = @set x >= 0 && y >= 0 && x + y >= 1
       without reformulation to SDP using
       the approach of (Papp, Y{\i}ld{\i}z 2017) % \cite{papp2017sum}
       is under development.
-    \item[\textbf{Caching}] Cache of the problem data in case the solver do not support
+    \item[\textbf{\textcolor{jblue!85}{Caching}}] Cache of the problem data in case the solver do not support
       a modification (can be disabled). For instance, Mosek provides many
       modification capabilities in the API but CSDP only support
       pre-allocating and then loading the whole problem at once.
