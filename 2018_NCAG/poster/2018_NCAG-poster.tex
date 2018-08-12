@@ -288,28 +288,6 @@ S = @set x >= 0 && y >= 0 && x + y >= 1
     \draw[->, line width=1mm] (0, -5.5) to ( 2, -7.5);
     \draw[rounded corners=20pt, fill=canard!60] (-3, -8.5) rectangle (3, -7.5);
     \node at (0, -8) {Solvers: Mosek, CSDP, SCS...};
-%    \SetVertexNormal[Shape=rectangle,FillColor = yellow!50]
-%    \draw[rounded corners=6pt] (-6.4, 2.5) rectangle (4, 3.5);
-%    \Vertex[x=0,y=3,L={\jlpkg{SumOfSquares}}]{SOS}
-%    \Vertex[x=0,y=1,L={\jlpkg{SumOfSquares}}]{SOS}
-%
-%    %\draw[->, bend left=20] (-4, 2.5) to (-1, 0.5);
-%    %\draw[->, bend left=20] (-4, 2.5) to (-1, 0.5);
-%    \draw[->] (-4, 2.5) .. controls (-1, 2) and (-1, 1.5) .. (-1, 0.5);
-%    \draw[->] ( 3, 2.5) .. controls (-1, 2) and (-1, 1.5) .. (-1, 0.5);
-%    \draw[->] ( 0, 2.5) .. controls (-1, 2) and (-1, 1.5) .. (-1, 0.5);
-%
-%    \draw[rounded corners=6pt] (-6.6, -1.5) rectangle (4, 0.5);
-%    \Vertex[x=0,y=0,L={\jlpkg{SumOfSquares}}]{SOS}
-%    \SetVertexNormal[Shape=rectangle,FillColor = blue!30]
-%    \Vertex[x=3,y=0,L={\jlpkg{PolyJuMP}}]{PJMP}
-%    \SetVertexNormal[Shape=rectangle,FillColor = green!50]
-%    \Vertex[x=-4,y=0,L={\jlpkg{MultivariatePolynomials}}]{MP}
-%    \Vertex[x=-5,y=-1,L={\jlpkg{TypedPolynomials}}]{TP}
-%    \Vertex[x=-1.5,y=-1,L={\jlpkg{DynamicPolynomials}}]{DP}
-%    %\tikzset{EdgeStyle/.style={->}}
-%    \Edge(MP)(TP)
-%    \Edge(MP)(DP)
   \end{tikzpicture}
   \end{center}
   \begin{description}
@@ -324,9 +302,6 @@ S = @set x >= 0 && y >= 0 && x + y >= 1
     \printbibliography
   \end{block}
 
-  %\begin{tikzpicture}
-  %  \includegraphics{JuMP.png}
-  %\end{tikzpicture}
 \end{column}
 
 \end{columns} % End of all the columns in the poster
