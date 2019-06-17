@@ -1,0 +1,15 @@
+Title: JuMP extension to Sum-of-Squares Programming
+
+Author: Benoît Legat (UCLouvain)
+Joint work with (alphabetical order): Chris Coey (MIT), Robin Deits (MIT), Joey Huchette (Rice University), Amelia Perry (MIT) et Tillmann Weisser (Los Alamos National Laboratory)
+
+Abstract:
+The version 0.19 of JuMP based on MathOptInterface (MOI) was designed to be extended in a natural way so that new classes of optimization problems can be modeled with JuMP.
+The packages PolyJuMP.jl and SumOfSquares.jl extend JuMP to enable the creation of polynomial variables as well as equality or nonnegative constraints on polynomials.
+The bridge mechanism of MOI is exploited to express the cone of Sum-of-Squares polynomials as a linear image of the cone of positive semidefinite matrices.
+
+Links:
+JuMP: https://github.com/JuliaOpt/JuMP.jl
+MathOptInterface: https://github.com/JuliaOpt/MathOptInterface.jl
+PolyJuMP: https://github.com/JuliaOpt/PolyJuMP.jl
+SumOfSquares: https://github.com/JuliaOpt/SumOfSquares.jl
