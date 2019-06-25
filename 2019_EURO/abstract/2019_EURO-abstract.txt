@@ -1,0 +1,14 @@
+# Title
+
+JuMP and MathOptInterface: An optimization framework extensible by design
+
+# Abstract
+
+This talk presents the optimization interface MathOptInterface (MOI), an abstraction layer that replaces the previous solver abstraction in JuMP. While the previous interface had 3 fixed problem format: Linear/Quadratic, Conic and Nonlinear, the MOI interface is generic. An optimization problem is described by an objective and a list of constraints written in the form function-in-set. Standard types of functions are defined in MOI but new ones can be defined independently. This allows algorithms that can exploit novel problem structure to extend MOI and enable the user to model the custom constraint type in JuMP.
+In addition to this ability to encode custom constraint types, while optional, JuMP macros can be extended to provide a more convenient syntax for creating them.
+
+The rich expressivity of the interface renders the interface challenging to implement completely for a solver.
+For these reasons, MOI is equipped with an automatic bridging mechanism. A bridge describes a transformation of a constraint into an equivalent form. If a constraint type is not supported, appropriate transformations will automatically be selected using an algorithm derived from Bellman-Ford.
+Thanks to bridges, a solver should only support the constraint types that exhibits a structure that is actually exploited by the solver while the user interface is enhanced with more modelling tools.
+
+This is illustrated by the extension of JuMP to polynomials variables and Sum-of-Squares constraints.
