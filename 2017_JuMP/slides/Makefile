@@ -1,2 +1,2 @@
 TYPE=slides
-include ../JuMP-dev.mk
+include ../2017_JuMP.mk
