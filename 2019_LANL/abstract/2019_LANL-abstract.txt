@@ -1,0 +1,14 @@
+Automatic reformulation using optimization bridges
+
+There is a gap between what we want to solve and what we can solve.
+In other words, the model that the optimization user requires to be solved does not always match the model
+that compatible solvers were designed to solve.
+Indeed, the user typically want the represent in the model as most structure about its problem as possible
+while the solver is usually dedicated to a class of optimization problem and only support the structure that it actually exploits.
+
+Implementing the support for every possible structure a solver is compatible with in a solver-specific manner
+is unscalable in addition to preventing solvers from supporting structures that it does not know about.
+MathOptInterface bridges this gap in a solver-independent way that fully supports
+a decentralized development of the modeling framework.
+Problem reformulations can be defined independently and appropriate transformations are
+automatically selected using an algorithm derived from Bellman-Ford.
