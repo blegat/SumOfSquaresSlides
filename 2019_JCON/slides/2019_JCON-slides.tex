@@ -53,10 +53,10 @@
 \newcommand{\adol}{\alpha_\$}
 \newcommand{\apou}{\alpha_\text{\pounds}}
 
-\title{Automatic reformulation using optimization bridges}
-%\date{}
+\title{Polynomial and Moment Optimization in Julia and JuMP}
+\date{August 24, 2019}
 \author{Beno\^it Legat (UCLouvain)}
-\institute{Los Alamos National Laboratory, 16th July 2019}
+%\institute{Los Alamos National Laboratory, 16th July 2019}
 %\institute{UCLouvain\\
 %           Massachusetts Institute of Technology (MIT)\\
 %           Rice University\\
@@ -305,7 +305,7 @@ model = Model(...)
 
 \begin{frame}{Quadratic to RSOC duals}
   Consider $z^T U^\top U z/2 + a^\top z + \beta \le 0$ transformed,
-  so $(1, -a^T z - b, Uz) = (1, s, x) \in {}$ RSOC.
+  so $(1, -a^T z - \beta, Uz) = (1, s, x) \in {}$ RSOC.
 
   RSOC in Lagrangian:
   \begin{align*}
@@ -390,6 +390,7 @@ model = Model(...)
       \Vertex[x=1, y=-3, L={$A x + b \in \{0\}^1$}]{Z}
       \Vertex[x=1, y=0, L={$x$ free}]{F}
       \Vertex[x=0, y=0, L={$x \in \mathbb{R}_-^1$}]{VP}
+      \Vertex[x=2, y=-1.6, L={$\min x$}]{SV}
       \tikzset{VertexStyle/.style = {
         shape = rectangle,
         draw
@@ -400,6 +401,7 @@ model = Model(...)
         draw
       }}
       \Vertex[x=2, y=-3, L={$a^\top x = \beta$}]{E}
+      \Vertex[x=2, y=-2.4, L={$\min a^\top x$}]{AF}
       \Vertex[x=0, y=-3, L={$x \in \mathbb{S}_+$}]{VPSD}
       \Vertex[x=0, y=-1, L={$x \in \mathbb{R}_+^1$}]{VN}
       \tikzset{EdgeStyle/.style = {->}}
@@ -421,26 +423,11 @@ model = Model(...)
       \Edge[label={free}](F)(VP)
       \Edge[label={free}](F)(VN)
       \Edge[label={flip}](VP)(VN)
+      \Edge[label={functionize}](SV)(AF)
       \tikzset{EdgeStyle/.style = {->, bend left=30, pos=0.7}}
       \Edge[label={slack}](R)(Z)
-      %\Edge[label={slack}](N)(Z)
-      %\Edge[label={slack}](N)(VN)
-      %\Edge[label={slack}](G)(VG)
-      %\tikzset{EdgeStyle/.style = {->, pos=0.3}}
-      %\Edge[label={slack}](G)(E)
-      %\tikzset{EdgeStyle/.style = {->, bend left=22, pos=0.3}}
-      %\Edge[label={slack}](P)(VP)
-      %\tikzset{EdgeStyle/.style = {->, bend left=20, pos=0.7}}
-      %\Edge[label={vectorize}](VL)(VP)
-      %\tikzset{EdgeStyle/.style = {->, bend left=25, pos=0.8}}
-      %\Edge[label={slack}](L)(E)
-      %\tikzset{EdgeStyle/.style = {->, bend right=20, pos=0.3}}
-      %\Edge[label={vectorize}](VG)(VN)
-      %\tikzset{EdgeStyle/.style = {->, bend right=25}}
-      %\tikzset{EdgeStyle/.style = {->, bend right=60, pos=0.2}}
-      %\Edge[label={slack}](L)(VL)
-      %\tikzset{EdgeStyle/.style = {->}}
-      %\Edge[label={flip}](P)(N)
+      \tikzset{EdgeStyle/.style = {->, bend left=45, pos=0.85}}
+      \Edge[label={slack}](Q)(SV)
     \end{tikzpicture}
   \end{center}
 }
@@ -578,7 +565,7 @@ Complexity $\mathcal{O}(|N| \cdot |E|)$
   \begin{algorithm}[H]
     \caption{recursive add $S$}
     \begin{algorithmic}
-      \STATE add $F$-in-$S$ to $\mathcal{V}$
+      \STATE add $S$ to $\mathcal{V}$
       \FOR{$B \in \mathcal{B}_\mathcal{V}(S)$}
         \FOR{$S' \in \mathcal{A}_\mathcal{V}(B, S)$}
           \IF{$d_\mathcal{V}(S')$ not defined}
@@ -628,7 +615,7 @@ Complexity $\mathcal{O}(|N| \cdot |E|)$
       \ENDFOR
       \FOR{$F$-in-$S \in \mathcal{C}$, $B \in \mathcal{B}_\mathcal{C}(F, S)$}
 				\STATE $u \leftarrow 1 + \sum_{S' \in \mathcal{A}_\mathcal{V}(B, F, S)} d_\mathcal{V}(S') + \sum_{(F', S') \in \mathcal{A}_\mathcal{C}(B, F, S)} d_\mathcal{C}(F', S')$
-				\IF{$u < d_\mathcal{O}(F, S)$}
+				\IF{$u < d_\mathcal{C}(F, S)$}
 					\STATE $d_\mathcal{C}(F, S) \leftarrow u$
 				\ENDIF
       \ENDFOR
@@ -763,7 +750,81 @@ end
     \end{columns}
   \end{frame}
 
+\begin{frame}
+  \frametitle{Sum-of-Squares bridges}
+  Polynomial $p \in \Sigma$ ($p$ is SOS) iff
+  $p = X^\top Q x$ with $Q \in \mathbb{S}_+$ ($Q$ is PSD).
+  Hence $\Sigma = A \mathbb{S}_+$.
+
+  SOSPolnomialBridge: Transformation of variable-in-$\Sigma$ to variable-in-$\mathbb{S}_+$.
+
+  Transformation of contraint $F$-in-$\Sigma$: SlackBridge + SOSPolnomialBridge.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Result transformations}
+  \begin{block}{Constraint Attribute}
+    \textbf{Examples}: ConstraintPrimal, ConstraintDual, ConstraintFunction, ConstraintSet, ...
+
+    \alert{Redirected} to bridge when constraint is bridged.
+  \end{block}
+  New attributes:
+  \begin{itemize}
+    \item GramMatrixAttribute: Gram matrix $Q$ indexed by $X$.
+    \item MomentMatrixAttribute: Moment matrix index by $X$, dual of constraint $Q \in \mathbb{S}_+$.
+    \item MomentsAttribute: Vector of moments, dual of constraint $p = X^\top Q X$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Sum-of-Squares constraint macro}
+\begin{minted}{Julia}
+@constraint(model, p in SOSCone())
+\end{minted}
+  Implementation:
+\begin{minted}{Julia}
+function JuMP.build_constraint(_error::Function, p,
+                               cone::SOSCone; kws...)
+    coefs = coefficients(p)
+    monos = monomials(p)
+    set = JuMP.moi_set(cone, monos; kws...)
+    shape = PolyJuMP.PolynomialShape(monos)
+    return PolyJuMP.bridgeable(
+        JuMP.VectorConstraint(coefs, set, shape),
+        JuMP.moi_function_type(typeof(coefs)),
+        typeof(set)
+    )
+end
+\end{minted}
+\end{frame}
+
 \section{Reshaping}
+
+\begin{frame}[fragile]
+  \frametitle{Reshaping sets}
+\begin{minted}{Julia}
+function reshape_set(set::MOI.AbstractScalarSet,
+                     ::ScalarShape)
+    return set
+end
+function reshape_set(
+    ::MOI.PositiveSemidefiniteConeTriangle,
+    ::SymmetricMatrixShape
+)
+    return PSDCone()
+end
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Reshaping polynomial sets}
+\begin{minted}{Julia}
+function JuMP.reshape_set(set::SOSPolynomialSet,
+                          ::PolyJuMP.PolynomialShape)
+    return set.cone
+end
+\end{minted}
+\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Reshaping results}
@@ -786,25 +847,7 @@ end
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Reshaping sets}
-\begin{minted}{Julia}
-function reshape_set(set::MOI.AbstractScalarSet,
-                     ::ScalarShape)
-    return set
-end
-function reshape_set(
-    ::MOI.PositiveSemidefiniteConeTriangle,
-    ::SymmetricMatrixShape
-)
-    return PSDCone()
-end
-\end{minted}
-\end{frame}
-
-
-
-\begin{frame}[fragile]
-  \frametitle{Reshaping polynomial results and sets}
+  \frametitle{Reshaping polynomial results}
 \begin{minted}{Julia}
 function JuMP.reshape_set(set::SOSPolynomialSet,
                           ::PolyJuMP.PolynomialShape)
@@ -818,6 +861,17 @@ function JuMP.reshape_vector(x::Vector,
                              shape::MomentsShape)
     return measure(x, shape.monomials)
 end
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dual shape}
+  In JuMP:
+\begin{minted}{Julia}
+dual_shape(shape::AbstractShape) = shape
+\end{minted}
+  In PolyJuMP:
+\begin{minted}{Julia}
 function JuMP.dual_shape(shape::PolynomialShape)
     return MomentsShape(shape.monomials)
 end
@@ -827,6 +881,13 @@ end
 \end{minted}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Conclusion}
+  JuMP and MathOptInterface provide an optimization framework \alert{extensible} by \alert{design}.
 
+  \vspace{4em}
+
+  Bridges allow to communicate \alert{custom} structure to solvers from \alert{solver-independent} models.
+\end{frame}
 
 \end{document}

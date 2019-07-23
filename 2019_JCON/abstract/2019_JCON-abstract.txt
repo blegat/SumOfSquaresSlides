@@ -1,0 +1,10 @@
+Polynomial and Moment Optimization in Julia and JuMP
+
+Polynomial and moment optimization problems are infinite dimensional optimization problems that can model a wide range of problems in engineering and statistics.
+In this minisymposium we show how the Julia and JuMP ecosystems are particularly well suited for the effortless construction of these problems and the development of state-of-the-art solvers for them.
+
+Polynomial and moment optimization problems are infinite dimensional optimization problems that can model a wide range of problems such as shape-constrained polynomial regression, optimal control of dynamical systems, region of attraction, polynomial matrix decomposition, smooth maximum-likelihood density estimation, AC power systems, experimental design, and computation of Nash equilibria.
+In this minisymposium we show how the Julia and JuMP ecosystems are particularly well suited for constructing and solving these problems.
+In particular, we show how the JuMP extensions SumOfSquares/PolyJuMP allow for an effortless construction of these problems and how they provide a flexible and customizable building block for additional packages such as JuliaMoments.
+We also show how various features of the Julia programming language are used in the state-of-the-art solvers Hypatia.jl and Aspasia.jl.
+Finally, we showcase specific uses of these tools for applications in engineering and statistics.
