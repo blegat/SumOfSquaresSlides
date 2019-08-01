@@ -69,6 +69,30 @@
 \begin{document}
   \maketitle
 
+\begin{frame}
+  \frametitle{Polynomial Optimization community}
+  \begin{itemize}
+    \item Subcommunity of JuMP-dev community.
+    \item Gitter channel: \url{https://gitter.im/JuliaOpt/SumOfSquares.jl}.
+    \item Optimization packages: SumOfSquares, PolyJuMP, MomentOpt, Hypatia
+    \item Depends on JuliaAlgebra packages: MultivariatePolynomials (implementations: DynamicPolynomials, TypedPolynomials),
+      SemialgebraicSets, MultivariateBases, MultivariateMoments.
+    \item Fast growing community (alphabetical order):
+      Paul Breiding,
+      Robin Deits,
+      Marcelo
+      Forets,
+      Joey Huchette,
+      Bernard Mourrain,
+      Amelia Perry,
+      Sascha Timme...
+    \item JuMP GSOC projects benefits polynomial optimization:
+      Arpit Bhatia (examples),
+      Guilherme Bodin (Automatic Dualization) and
+      Gilles Peiffer (Mutable Arithmetics).
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Overview}
 \Wider[4em]{
   \begin{center}
@@ -91,8 +115,8 @@
       \draw[->, line width=1pt] (-0.5, -0.8) to (-3, -3.5);
       \draw[->, line width=1pt] (0.5, -0.8) to (0.9, -1.5);
       \draw[->, line width=1pt] (3, -2.5) to (3.5, -3.5);
-      \draw[rounded corners=5pt, fill=canard!60] (-5, -4.5) rectangle (-3, -3.5);
-      \node at (-4, -4) {Hypatia};
+      \draw[rounded corners=5pt, fill=canard!60] (-5.2, -4.5) rectangle (-2.8, -3.5);
+      \node at (-4, -4) {\jlpkg{Hypatia}};
       \draw[rounded corners=5pt, fill=canard!60] (2.5, -4.5) rectangle (5.5, -3.5);
       \node at (4, -4) {SDP solver};
     \end{tikzpicture}
@@ -110,9 +134,9 @@
     \frametitle{MathOptInterface (MOI)}
     MOI in a nutshell:
     \begin{itemize}
-      \item \verb|add_variable(model)|.
+      \item \verb|add_variable(model)|, \verb|add_constrained_variable(model, set)|.
       \item \verb|add_constraint(model, func, set)|, e.g. $2x + 3y = 1$ $\to$ (\verb|2*x + 3*y|)-in-\verb|EqualTo(1.0)|.
-      \item \verb|set|, \verb|get| attributes, e.g., \verb|ObjectiveSense|, \verb|ObjectiveFunction|.
+      \item \verb|set|, \verb|get| attributes, e.g., \verb|ObjectiveFunction|.
     \end{itemize}
     Extensible framework:
     \begin{itemize}
@@ -293,7 +317,7 @@ model = Model(...)
 %\end{frame}
 
 \begin{frame}
-  \frametitle{Shortest path in directed Hypergraph}
+  \frametitle{Bridges directed hypergraph}
   \vspace{-.2cm}
   \begin{block}{Nodes}
     Node for each set $S$ (variable-in-$S$).
@@ -325,9 +349,11 @@ model = Model(...)
 \begin{frame}
   \frametitle{Bridges selection}
 
-  \begin{block}{Multiple dispatch}
-    Several bridge can transform same types.
+  \begin{block}{Multiple dispatch ?}
+    Can we use multiple dispatch where node types are method signatures ?
 
+    \textbf{No}.
+    Several bridge can transform same types.
     Dispatching on more specialized is not accurate.
 
     Need to guide choice to supported types.
@@ -347,16 +373,18 @@ model = Model(...)
 
 \begin{frame}
   \frametitle{Bridge selection algorithm}
+  \textbf{Data}: Set of bridges $B$
+
   \textbf{Invariant}: $d_\mathcal{V}$, $d_\mathcal{C}$, $d_\mathcal{O}$
   are correct when defined.
 
-  Given new type: compute types where $d$ should be defined with
-  Depth First Search (DFS) from the type: $\mathcal{O}(|E|)$.
+  Given new type: compute types $T$ where $d$ should be defined with
+  Depth First Search (DFS) from the type: $\mathcal{O}(|B|)$.
 
-  Compute $d$ at the types using Bellman-Ford-like algorithm: $\mathcal{O}(|N| \cdot |E|)$.
+  Compute $d$ at the types using Bellman-Ford algorithm: $\mathcal{O}(|T| \cdot |B|)$.
 \end{frame}
 
-\section{Integration with JuMP}
+\section{Extending JuMP}
 
 \begin{frame}[fragile]
   \frametitle{Extending JuMP macros}
@@ -367,9 +395,15 @@ model = Model(...)
 \begin{minted}{Julia}
 function build_constraint(
     _error::Function,
-    func::Vector{<:AbstractJuMPScalar},
-    set::MOI.AbstractVectorSet)
+    func::Vector, set::MOI.AbstractVectorSet)
     return VectorConstraint(x, set)
+end
+function add_constraint(model, c::AbstractConstraint,
+                        name)
+    index = MOI.add_constraint(backend(model),
+        moi_function(c), moi_set(c))
+    ... # set name and shape
+    return ConstraintRef(model, index, shape(c))
 end
 \end{minted}
 \end{frame}
@@ -410,6 +444,23 @@ function build_constraint(_error::Function,
     set = MOI.PositiveSemidefiniteConeTriangle(n)
     VectorConstraint(func, set,
                      SymmetricMatrixShape(n))
+end
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Adding bridges}
+\begin{minted}{Julia}
+struct BridgeableConstraint{C, B} <: AbstractConstraint
+    constraint::C
+    bridge_type::B
+end
+
+function add_constraint(model::Model,
+                        c::BridgeableConstraint,
+                        name::String="")
+    add_bridge(model, c.bridge_type)
+    return add_constraint(model, c.constraint, name)
 end
 \end{minted}
 \end{frame}
@@ -481,6 +532,34 @@ end
         \includegraphics[trim=3cm .7cm 6cm 3cm, clip, width=\textwidth]{motzkin.png}
       \end{column}
     \end{columns}
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{Theory behind bridges}
+    \[ x \in S_1 \Leftrightarrow Ax \in S_2 \qquad AS_1 = S_2 \]
+    \[ A^* y \in S_1^* \Leftrightarrow y \in S_2^* \qquad S_1^* = A^* S_2^* \]
+    In Lagrangian:
+    \[ \langle Ax, y \rangle_2 = \langle x, A^* y \rangle_1 \]
+    \vspace{-0.5cm}
+    \begin{block}{Transformation of variable-in-$S_2$ to variable-in-$S_1$.}
+%      \[ Ax \in S_1 \Leftrightarrow x \in S_2 \qquad S_1 = AS_2 \]
+%      \[ y \in S_1^* \Leftrightarrow A^* y \in S_2^* \qquad A^* S_1^* = S_2^* \]
+%
+%      Dans un Lagrangien:
+%      \[ \langle x, A^* y \rangle_2 = \langle A x, y \rangle_1 \]
+      \begin{enumerate}
+        \item[Primal] Transform value $v$ to $Av$.
+        \item[Dual] Transform dual $y$ to $A^{-*}y$.
+      \end{enumerate}
+    \end{block}
+    \begin{block}{Transformation of $f$-in-$S_1$ constraint to $Af$-in-$S_2$ constraint.}
+      %Transforme constraint $f$-in-$S_1$ en $Af$-in-$S_2$.
+
+      \begin{enumerate}
+        \item[Primal] Transform value $v$ of $Af$ to $A^{-1}v$ of $f$.
+        \item[Dual] Transform dual $y$ of $A^*y$.
+      \end{enumerate}
+    \end{block}
   \end{frame}
 
 \begin{frame}
