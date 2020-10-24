@@ -1,0 +1,174 @@
+\documentclass{beamer}
+\usetheme{metropolis}
+%\setbeamersize{text margin left=.2cm,text margin right=.2cm}
+\usepackage{graphicx}
+\graphicspath{{../../images/}}
+%\usepackage[french]{babel}
+%\usepackage{listings}
+%\usepackage{lipsum}
+\usepackage{boolexpr}
+\usepackage{kpfonts}
+\usepackage{caption}
+\usepackage{wrapfig}
+%\usepackage{chngcntr}
+\usepackage[labelformat=empty]{caption}
+\usepackage[official]{eurosym}
+
+\usepackage{minted}
+
+\usepackage{siunitx}
+
+% http://tex.stackexchange.com/questions/114830/how-can-i-use-lvert-and-rvert-norm-symbols-x-with-the-iwona-math-font
+\usepackage[math]{iwona}
+\usepackage{scalerel}
+\def\lVert{\mid\!\mid}
+\def\rVert{\mid\!\mid}
+
+\usepackage[normalem]{ulem}
+%\newcommand{\Adj}{\mathbf{A}}
+\usepackage{mathtools}
+
+\usepackage{../../custom}
+\usepackage{amsfonts}
+%\newcommand{\jsrcodepath}{../../code}
+%\usepackage{jsr}
+
+\newcommand{\expe}[2]{\la #1, #2 \ra}
+
+\usepackage{framed}
+
+%\usepackage{mathtools,xparse}
+%\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand\Wider[2][3em]{%
+\makebox[\linewidth][c]{%
+  \begin{minipage}{\dimexpr\textwidth+#1\relax}
+  \raggedright#2
+  \end{minipage}%
+  }%
+}
+
+\newcommand{\aeur}{\alpha_\text{\euro}}
+\newcommand{\adol}{\alpha_\$}
+\newcommand{\apou}{\alpha_\text{\pounds}}
+
+\title{SumOfSquares: A Julia package for Polynomial Optimization}
+\date{November, 2020}
+\author{Beno\^it Legat, Tillmann Weisser}
+%\institute{Los Alamos National Laboratory, 16th July 2019}
+%\institute{UCLouvain\\
+%           Massachusetts Institute of Technology (MIT)\\
+%           Rice University\\
+%           Los Alamos National Laboratory (LANL)}
+
+% https://tex.stackexchange.com/questions/426088/texlive-pretest-2018-beamer-and-subfig-collide
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
+\begin{document}
+  \maketitle
+
+\begin{frame}
+  \frametitle{History}
+  \begin{itemize}
+    \item Started in August 2016: \texttt{SOSTOOLS} demos.
+    \item October 2016: Amelia Perry, Joey Huchette, Robin Deits and Chris Coey join,
+      package split into \texttt{MultivariatePolynomials}, \texttt{PolyJuMP} and \texttt{SumOfSquares}.
+    \item April 2017, \texttt{MultivariatePolynomials} split into
+      \texttt{MultivariatePolynomials}, \texttt{DynamicPolynomials}, \texttt{TypedPolynomials},
+    \item August 2017 \texttt{MultivariateMoments} and \texttt{SemialgebraicSets} moved out of \texttt{SumOfSquares}.
+    \item June 2017--March 2019 Development of \texttt{MathOptInterface} (MOI) $\to$ rewrite of \texttt{JuMP}, \texttt{PolyJuMP} and \texttt{SumOfSquares}.
+    \item July 2019--December 2020 Development of \texttt{MutableArithmetics} for \alert{performance}.
+    \item 2019--2020 \texttt{MomentOpt} and Tillmann Tweisser push for more \alert{features}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{MutableArithmetics}
+  What is mutable in (JuMP/MOI var: $\alpha$, Polynomial var: $x$):
+  \[
+    A = \begin{bmatrix}
+      \alpha x + 1 & x - \alpha\\
+      x - \alpha & x + 2
+    \end{bmatrix}
+  \]
+  \uncover<2>{
+    3 nested levels of mutability (4 with e.g. \texttt{BigInt}/\texttt{BigFloat}) $\to$
+    huge toll on performance.
+
+    MutableArithmetics API:
+    \begin{itemize}
+      %\item \texttt{MA.operate}: Output is safe to mutate.
+      \item \texttt{MA.operate!} / \texttt{MA.operate\_to!}: May mutate first argument.
+      \item \texttt{MA.mutable\_operate!} / \texttt{MA.mutable\_operate\_to!}: Must mutate first argument.
+    \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}{Polynomial basis}
+  \[ p(x) = b(x)^\Tr Q b(x) \]
+  Basis $b$ from \texttt{MultivariateBases} package:
+  \begin{itemize}
+    \item \texttt{MonomialBasis}: $x^2, xy, y^2$
+    \item \texttt{ScaledMonomialBasis}: $x^2, \sqrt{2} xy, y^2$
+    \item Orthogonal basis: Hermite, Laguerre, Legendre and Chebyshev bases.
+    \item More to come... (e.g. Lagrange interpolation basis)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Certificates}
+
+  \emph{Ideal} certificates (SOS on algebraic variety):
+  \begin{itemize}
+    \item Remainder: $p(x)$ SOS when $x \in S$ $\to$ remainder modulo $S$.
+    \item Newton polytope.
+    \item Maxdegree (all monomials up to degree $d$).
+  \end{itemize}
+  \emph{Preorder} certificates (SOS on basic semialgebraic set):
+  \begin{itemize}
+    \item Putinar certificate:
+      \[ g_i(x) \ge 0 \Rightarrow p(x) \ge 0 \quad \leftrightarrow \quad p(x) = s_0(x) + \sum_i s_i g_i. \]
+  \end{itemize}
+
+  \alert{Flexibility} by combining existing or creating new certificates.
+\end{frame}
+
+\begin{frame}{Sparsity reduction}
+  \[ p(x) = b(x)^\Tr Q b(x) \to p(x) = b_1(x)^\Tr Q_1 b_1(x) + \cdots + b_k(x)^\Tr Q_k b_k(x) \]
+
+  \begin{itemize}
+    \item \texttt{SignSymmetry} certificate.
+    \item \alert{Chordal} sparsity certificates:
+      \begin{itemize}
+        \item \texttt{VariableSparsity}: Variable/correlative sparsity.
+        \item \texttt{MonomialSparsity}: Monomial/term sparsity.
+      \end{itemize}
+      \alert{Chordal} \emph{extension} implementation with \emph{greedy} fill-in heuristics.
+      Should move to separate package (with \texttt{COSMO} ?).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Sums of Hermitian squares / non-commutative}
+  \[ p(x) = b(x)^\Tr Q b(x) \]
+  with $x_1x_2 \neq x_2x_1$, $Q \in \mathbb{C}^{n \times n}$ hermitian PSD:
+  \begin{itemize}
+    \item Initial work on extending MOI to \emph{complex} numbers in \texttt{ComplexOptInterface},
+      e.g. \begin{center} \alert{complex} hermitian PSD $\to$ \alert{real} symmetric PSD. \end{center}
+    \item \emph{Non-commutative} algebra implemented in \texttt{DynamicPolynomials},
+      i.e. created with \texttt{@ncpolyvar}.
+    \item Implementation of Newton polytope for non-commutative variables.
+    \item Still features missing compared to \texttt{NCSOStools},
+      e.g. atom extraction with \texttt{MultivariateMoments}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Future work}
+  \begin{itemize}
+    \item Polynomial basis for equality (Pull Requests opened by Tillmann Weisser).
+    \item Symmetry reduction (Good progress made by Tillmann Weisser and Marek Kaluba).
+    \item Certificates for \texttt{PolyJuMP}: equality in ideal without Groebner basis.
+    \item Better integration with \texttt{Hypatia} (just released!)
+    \item More certificates: Schm\"{u}dgen, ...
+    \item Rework examples with Literate to include in documentation.
+  \end{itemize}
+\end{frame}
+
+\end{document}

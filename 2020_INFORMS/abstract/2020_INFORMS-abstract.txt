@@ -1,0 +1,5 @@
+SumOfSquares: A Julia package for Polynomial Optimization
+
+With the modeling power of Sum-of-Squares programming comes significant challenges for efficiently generating equivalent semidefinite programs that can be solved efficiently and accurately.
+We discuss in this talk the approach we used to implement a reformulation flexible, feature-rich and extensible while still being as efficient as specialized code.
+We then detail the different features implemented in SumOfSquares to improve the numerical conditioning and decrease the size of the semidefinite problem in order to improve scalability.
