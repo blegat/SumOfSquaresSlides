@@ -1,0 +1,9 @@
+Symmetry reduction in semidefinite optimization
+
+Semidefinite programming naturally come as exact or approximate formulation of many practical applications.
+Usually the limiting factor is the size of semidefinite constraints due to much worse algorithmical complexity and the sensibility towards numerical conditioning of the instance compared to e.g. linear programming.
+To alleviate this problem different methods of simplification of semidefinite programs were devised, e.g. chordal decomposition which is based on sparsity patterns of semidefinite constraints.
+
+In this talk we discuss the approach based on utilising group symmetry to reduce the size of semidefinite problems, notably these originating from Sum-of-Squares programs.
+Under such symmetry, one can not only reduce to invariant solutions, but also block-diagonalize the semidefinite constraints which considerably decreases the size and complexity of the problem.
+We will then showcase features implemented in SymbolicWedderburn package and its integration with the SumOfSquares extension of JuMP.
