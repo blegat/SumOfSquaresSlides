@@ -1,0 +1,12 @@
+Symmetry reduction for Sum-of-Squares programming
+
+Sum-of-Squares or semidefinite programming allows to provide guaranteed bounds on remarkably many problems.
+Although several efficient algorithms exist to solve these programs,
+their space and time complexity and even their numerical robustness do not scale well with the size of the polynomial basis or semidefinite matrix.
+To alleviate this problem different methods have been developed to reduce constraints with a large basis or matrix into smaller ones.
+These exploit sign symmetry or sparsity structure using chordal decomposition.
+
+In this talk we discuss a symmetry reduction approach relying on the invariance of the polynomial under a group of actions.
+From the algebraic properties of the group, the SymbolicWedderburn package determines a change of basis that enables the decomposition of the
+constraints into smaller bases, some of them being equal which further reduces the problem.
+We show how to specify the group symmetry to allow SumOfSquares to perform this reformulation automatically.
