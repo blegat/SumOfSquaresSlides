@@ -26,7 +26,7 @@
       \begin{equation*}
         \label{eq:sdp_standard}
         \begin{array}{rl}
-          \min\limits_{X \in \SymK} & \la C, Q \ra\\
+          \min\limits_{X \in \SymK[N]} & \la C, Q \ra\\
           \text{subject to:} & \la A_i, Q \ra = b_i, \quad i=1,2,\ldots,m\\
           & Q \succeq 0.
         \end{array}
@@ -87,8 +87,35 @@
 \end{frame}
 
 \begin{frame}{SDP solvers}
-  \begin{block}{test}
+  For $n$-variate polynomial of degree $2d$:
+  $N = {n + d \choose n}, m = {n + 2d \choose n}$.
+  \begin{block}{Complexity of second order interior point solvers}
+    CSDP, DSDP, MOSEK, SDPA, SDPT3, SeDuMi
+
+    Time:
+    $\bigoh((mN + m^2)N^{5/2}\log(\varepsilon))$.
+    Space:
+    $\bigoh(m^2)$.
   \end{block}
+  Too much space needed for large scale problems, alternatives:
+  \begin{itemize}
+  %\begin{block}{First order methods}
+    \item
+    Newton conjugate gradient (Newton-CG), e.g., SDPNAL.
+    \item
+    ADMM, e.g., CDCS, COSMO, SCS.
+  %\end{block}
+  %\begin{block}{Low rank methods}
+    \item
+    Barvinok-Pataki bound: $\exists Q$ of rank $r \le \sqrt{2m}$.
+  \begin{itemize}
+    \item
+    Burer-Monteiro method: $Q = UU^\Tr$, $U \in \R^{N \times r}$, e.g. SDPLR.
+    \item
+    Primal-dual hybrid gradient (PDHG), e.g., ProxSDP.
+  \end{itemize}
+  \end{itemize}
+  %\end{block}
 \end{frame}
 
 \begin{frame}{Schur lemma}
@@ -166,4 +193,11 @@
   $$
 
   \noindent {\tiny Sagan, \emph{The symmetric group}, Springer Science \& Business Media, 2001: Definition~1.4.5, Definition~1.6.2, Example~1.7.2, Example~1.7.3 (adapted from $\mathcal{C}^{n \times n}$ to symmetric matrices $\SymK \subseteq \mathcal{R}^{n \times n}$)}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{SDP solvers}
+  \begin{minted}{Julia}
+    using SumOfSquares
+  \end{minted}
 \end{frame}
