@@ -197,9 +197,11 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
 \begin{tikzpicture}[scale=0.9]
 \draw [thin, draw=black!20, fill=blue!5] (0,0) grid (10.18,-10.18) rectangle (0,0);
 \node at (6.5, -9.5) {Original sdp constraint ($4\, 641 \times 4\, 641$)};
-\node at (.5,-.5) {\includegraphics[width=0.9cm]{AutF5_blocks.png}};
-% \node at (.5,-.5) };
+\node (ssdp) at (.5,-.5) {\includegraphics[width=0.9cm]{AutF5_blocks.png}};
+\node (label) at (6.5,-.5) {Symmetrized sdp constraint ($448\times 448$)};
+\draw [->] (label.west) -- (ssdp.east);
 \end{tikzpicture}
+
 
 \end{frame}
 
