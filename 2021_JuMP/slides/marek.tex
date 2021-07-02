@@ -17,8 +17,7 @@
 
 \begin{frame}{Isotypical projections}
     ``Types'' of actions $\leftrightarrow$  blocks in the block-diagonalization:
-    \[V \cong V_1 \oplus \cdots \oplus V_k.\]
-    
+    \[V \cong V_1 \oplus \cdots \oplus V_k.\]    
     Each block $V_i$ decomposes further as 
     $V = \bigoplus_i \oplus_{m_i} V_i'$. (\footnote{$m_i$ is the multiplicity of the action type in $V$})
     
@@ -81,12 +80,11 @@ Isotypical blocks when acting on $[1, x_1, x_2, x_3, x_4, x_5]$:
   @objective(model, Max, t)
   con_ref = @constraint(model, poly - t in SOSCone(), 
       symmetry = SymmetryPattern(G, VariablePermutation())) 
-  
-      
   optimize!(model)
 \end{minted}
 
 \normalsize
+
 Naive formulation $5\times 5$-psd; with symmetry: $2\times 2$, $2\times 2$, $1\times 1$-psd.
 
 Note: the sizes here correspond to the multiplicities of irreducible subspaces, \textbf{not} their dimensions!
@@ -124,7 +122,6 @@ Note: the sizes here correspond to the multiplicities of irreducible subspaces, 
 \]
 
 Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
-
 \end{frame}
 
 \begin{frame}[fragile]{Dihedral symmetry example}
@@ -146,6 +143,7 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
 
 \begin{frame}[fragile]{Implementing group action}
 \footnotesize
+
   \begin{minted}{julia}
   import GroupsCore
   struct DihedralGroup <: GroupsCore.Group ... end
@@ -178,8 +176,8 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
     \item symmetry group: $S_2 \wr S_5$ ($3840$ elements)
     \item After symmetrization:
       \begin{itemize}
-          \item $29$-blocks (largest: $58\times 58$), $13\,232$ variables in total
-          \item $7\,230$ constraints
+        \item $29$-blocks (largest: $58\times 58$), $13\,232$ variables in total
+        \item $7\,230$ constraints
       \end{itemize}
     \item Solvable!    
   \end{itemize}
@@ -187,13 +185,11 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
 \end{frame}
 
 \begin{frame}
-
 \begin{center}
 \vfill
 \includegraphics[height=\textheight]{AutF5_blocks.png}
 \vfill
 \end{center}
-
 \end{frame}
 
 \begin{frame}
@@ -203,7 +199,6 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
 \node at (6.5, -9.5) {Original sdp constraint ($4\, 641 \times 4\, 641$)};
 \node at (.5,-.5) {\includegraphics[width=0.9cm]{AutF5_blocks.png}};
 % \node at (.5,-.5) };
-
 \end{tikzpicture}
 
 \end{frame}

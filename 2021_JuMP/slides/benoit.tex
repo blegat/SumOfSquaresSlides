@@ -1,4 +1,4 @@
-\begin{frame}{Nonnegative polynomial into sum of squares}
+\begin{frame}{Nonnegative polynomial into sum of squares (SOS)}
   \begin{tikzpicture}
     \draw[->, bend left=20] (.6, 1.6) node[above] {$(x^3, x^2, x)$} to (.9, 1.35);
     \draw[->, bend right=30] (2.1, 2) node[right] {\alert{\emph{not} unique}} to (1.55, 1.35);
@@ -33,7 +33,7 @@
       \end{equation*}
     %\end{column}
     %\begin{column}{0.48\textwidth}
-      Is $x^6 - 2x^4 + 2x^2$ a sum of squares ?
+      Is $p(x) = x^6 - 2x^4 + 2x^2$ SOS ? $p(x) = X^\Tr Q X = \langle X X^\Tr, Q \rangle$:
       $$
       X =
       \begin{bmatrix}
@@ -90,12 +90,12 @@
   For $n$-variate polynomial of degree $2d$:
   $N = {n + d \choose n}, m = {n + 2d \choose n}$.
   \begin{block}{Complexity of second order interior point solvers}
-    CSDP, DSDP, MOSEK, SDPA, SDPT3, SeDuMi
-
     Time:
     $\bigoh((mN + m^2)N^{5/2}\log(\varepsilon))$.
     Space:
     $\bigoh(m^2)$.
+
+    E.g. CSDP, DSDP, Hypatia, MOSEK, SDPA, SDPT3, SeDuMi.
   \end{block}
   Too much space needed for large scale problems, alternatives:
   \begin{itemize}
@@ -108,6 +108,8 @@
   %\begin{block}{Low rank methods}
     \item
     Barvinok-Pataki bound: $\exists Q$ of rank $r \le \sqrt{2m}$.
+
+    SOSP: $\exists Q$ of rank $r \le {}$pythagoras number.
   \begin{itemize}
     \item
     Burer-Monteiro method: $Q = UU^\Tr$, $U \in \R^{N \times r}$, e.g. SDPLR.
@@ -119,25 +121,26 @@
 \end{frame}
 
 \begin{frame}{Schur lemma}
-  \noindent$(X_i)_i\subseteq \R^{n \times n}$ \emph{reducible} if $\exists \{0\} \subset \mathcal{V} \subseteq \R^n$ s.t. $\forall i, X_i \mathcal{V} \subseteq \mathcal{V}$
+  \noindent$(\induced_i)_i\subseteq \R^{n \times n}$ \emph{reducible} if $\exists \{0\} \subset \mathcal{V} \subseteq \R^n$ s.t. $\forall i, \induced_i \mathcal{V} \subseteq \mathcal{V}$.
 
-  \noindent$(X_i)_i\subseteq \R^{n \times n}$ \emph{equivalent} to $(Y_i)_i\subseteq \R^{n \times n}$ if $\exists T$ s.t. $X_i = TY_iT^{-1}$
+  \noindent$(\induceda_i)_i, (\inducedb_i)_i \subseteq \R^{n \times n}$ \emph{equivalent} if $\exists T$ s.t. $\forall i, \induceda_i = T\inducedb_iT^{-1}$.
 
-  If $X, Y$ are irreducible and inequivalent, then
+  If $(\induceda_i)_i, (\inducedb_i)_i$ are irreducible and inequivalent, then
   $$
+  \forall i,
   %\begin{bmatrix}
   %  Q_{11} & Q_{12}\\
   %  Q_{21} & Q_{22}
   %\end{bmatrix}
   Q
   \begin{bmatrix}
-    X & 0\\
-    0 & Y
+    \induceda_i & 0\\
+    0 & \inducedb_i
   \end{bmatrix}
     =
   \begin{bmatrix}
-    X & 0\\
-    0 & Y
+    \induceda_i & 0\\
+    0 & \inducedb_i
   \end{bmatrix}
   Q
   %\begin{bmatrix}
@@ -157,7 +160,7 @@
    %Q_{21} = Q_{12} = 0.
   $$
 
-  If $X$ is irreducible, then (permuting rows/columns give
+  If $(\induced_i)_i$ is irreducible, then (permuting rows/columns give
   $I \otimes C$)
   $$
   %\begin{bmatrix}
@@ -166,13 +169,13 @@
   %\end{bmatrix}
   Q
   \begin{bmatrix}
-    X & 0\\
-    0 & X
+    \induced_i & 0\\
+    0 & \induced_i
   \end{bmatrix}
     =
   \begin{bmatrix}
-    X & 0\\
-    0 & X
+    \induced_i & 0\\
+    0 & \induced_i
   \end{bmatrix}
   Q
   %\begin{bmatrix}
@@ -196,8 +199,33 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{SDP solvers}
-  \begin{minted}{Julia}
-    using SumOfSquares
-  \end{minted}
+  \frametitle{Invariance and convexity}
+  \begin{block}{Theorem}
+    Objective and feasible sets are \alert{invariant} and \alert{convex}
+    $\to$
+    can restruct to invariant solutions.
+  \end{block}
+
+  %\begin{block}{
+    \textbf{Invariant SDP}:
+    $Q$ feasible $\Rightarrow$ $\induced_i^\Tr Q \induced_i$ feasible w/ same cost:
+
+    $\forall i, j, \induced_i A_j \induced_i^\Tr = A_j$ and $\induced_i C \induced_i^\Tr = C.$
+  %\end{block}
+
+  %\begin{block}{
+    \textbf{Invariant SOSP}:
+    $p(g_i(x)) = p(x)$, let $\induced_i$ s.t. $X(g_i(x)) = \induced_i X(x)$.
+  %\end{block}
+
+  %\begin{block}{Invariant solution}
+    \textbf{Invariant solution}:
+    $Q = \induced_i^\Tr Q \induced_i$. If $\induced_i^\Tr = \induced_i^{-1}$, $\induced_i Q = Q \induced_i$.
+  %\end{block}
+
+  \begin{center}
+    How to \alert{simultaneously} block-diagonalize $(\rho_i)_i$ ?
+  \end{center}
+
+  \noindent {\tiny \gatpar{}: Theorem~3.3}
 \end{frame}
