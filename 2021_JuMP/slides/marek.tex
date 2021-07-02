@@ -10,7 +10,7 @@
       ((1, 2), x) & \mapsto -x.
     \end{align*}
     {\small Observe: $f(x) = x^4 - 2x^2$ is invariant under this action.\\
-    Observe: $f(x) = x^6 - 2x^4 + 2x^2 = x^2 + (x-x^3)^2$ is invariant, but one of the summands isn't!}
+    Observe: $f(x) = x^6 - 2x^4 + 2x^2 = x^2 + (x-x^3)^2$ is invariant, but $x-x^3$ isn't!}
     
 \end{frame}
 
@@ -20,16 +20,16 @@
     \[V \cong V_1 \oplus \cdots \oplus V_k.\]
     
     Each block $V_i$ decomposes further as 
-    $V_i = \oplus_{m_i} V_i'$. (\footnote{$m_i$ is the multiplicity of the action type in $V$})
+    $V = \bigoplus_i \oplus_{m_i} V_i'$. (\footnote{$m_i$ is the multiplicity of the action type in $V$})
     
-    Universal (baseless) projections\footnote{related to irreducible characters} in \textbf{group ring $\mathbb{R}[G]$} $\leftrightarrow$ projections onto blocks (for every $V$!).
+    Universal (baseless) \textbf{projections}\footnote{related to irreducible characters} in group ring $\mathbb{R}[G]$ $\leftrightarrow$ projections onto blocks (for every representation $V$!).
 %     
     \begin{block}{Example}
     \small
-    Universal projections for $S_2$:\\[-0.2in]
+    Universal \textbf{projections} for $S_2$:\\[-0.2in]
     \begin{align*}
-      p_1 = \frac{1}{2}((1)(2) + (1,2)) & \to\text{invariants}\\ 
-      p_2 = \frac{1}{2}((1)(2) - (1,2)) & \to\text{flipped}
+      \pi_1 = \frac{1}{2}((1)(2) + (1,2)) & \to\text{invariants}\\ 
+      \pi_2 = \frac{1}{2}((1)(2) - (1,2)) & \to\text{flipped}
     \end{align*}
     \end{block}
     
@@ -74,18 +74,20 @@ Isotypical blocks when acting on $[1, x_1, x_2, x_3, x_4, x_5]$:
 \footnotesize
 \begin{minted}{julia}
   using SumOfSquares
-  import CSDP
-  model = Model(CSDP.Optimizer)
+  import ECOS # Note: ECOS doesn't support SPD cone,
+  # but 2×2 psd constraints translate to quadratic constraints
+  model = Model(ECOS.Optimizer)
   @variable(model, t)
   @objective(model, Max, t)
   con_ref = @constraint(model, poly - t in SOSCone(), 
       symmetry = SymmetryPattern(G, VariablePermutation())) 
-
+  
+      
   optimize!(model)
 \end{minted}
 
 \normalsize
-Naive formulation $5\times 5$-sdp; symmetry adapted: $2\times 2$, $2\times 2$, $1\times 1$-sdps.
+Naive formulation $5\times 5$-psd; with symmetry: $2\times 2$, $2\times 2$, $1\times 1$-psd.
 
 Note: the sizes here correspond to the multiplicities of irreducible subspaces, \textbf{not} their dimensions!
 
@@ -121,6 +123,8 @@ Note: the sizes here correspond to the multiplicities of irreducible subspaces, 
         \end{bmatrix}
 \]
 
+Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
+
 \end{frame}
 
 \begin{frame}[fragile]{Dihedral symmetry example}
@@ -133,6 +137,15 @@ Note: the sizes here correspond to the multiplicities of irreducible subspaces, 
       SymbolicWedderburn.ByLinearTransformation end
   \end{minted}
   The action is a mixture of changing sign and permuting variables.
+
+  TODO: basis,  sizes of psd
+  
+  Non-commutative groups are better for the symmetrization!
+  
+\end{frame}
+
+\begin{frame}[fragile]{Implementing group action}
+\footnotesize
   \begin{minted}{julia}
   import GroupsCore
   struct DihedralGroup <: GroupsCore.Group ... end
@@ -140,25 +153,19 @@ Note: the sizes here correspond to the multiplicities of irreducible subspaces, 
       ...
   end
   \end{minted}
+\normalsize
   \begin{itemize}
     \item implement methods from \texttt{GroupsCore.jl} API for \texttt{DihedralGroup}
     \item implement action methods from \texttt{SymbolicWedderburn} for \texttt{DihedralAction}
   \end{itemize}
-
-
 \end{frame}
 
-\begin{frame}{Groups interface: \texttt{GroupsCore.jl}}
-  ??? I don't think we will have time for this???
-\end{frame}
-
-\begin{frame}{Groups interface: \texttt{SymbolicWedderburn.jl}}
-    Behind the scenes:
+\begin{frame}{Behind the scenes: \texttt{SymbolicWedderburn.jl}}
     \begin{itemize}
       \item compute \textbf{character table} of the group $\longrightarrow$ universal projections
       \item given action e.g. on monomials, \textbf{induce} the action to the whole basis
       \item evaluate the projections in the action $\longrightarrow$ \textbf{block diagonalizing} change of basis
-      \item further \textbf{decompose} each block into to \textbf{irreducible} blocks\footnote{for now numerically only}.
+      \item further \textbf{decompose} each block into \textbf{irreducible} blocks\footnote{for now numerically only}.
     \end{itemize}
 \end{frame}
 
@@ -171,7 +178,7 @@ Note: the sizes here correspond to the multiplicities of irreducible subspaces, 
     \item symmetry group: $S_2 \wr S_5$ ($3840$ elements)
     \item After symmetrization:
       \begin{itemize}
-          \item $36$-blocks (largest: $58\times 58$), $13\,232$ variables in total
+          \item $29$-blocks (largest: $58\times 58$), $13\,232$ variables in total
           \item $7\,230$ constraints
       \end{itemize}
     \item Solvable!    
@@ -180,17 +187,22 @@ Note: the sizes here correspond to the multiplicities of irreducible subspaces, 
 \end{frame}
 
 \begin{frame}
-\centering
-\includegraphics[width=\textwidth]{AutF5_blocks.png}
+
+\begin{center}
+\vfill
+\includegraphics[height=\textheight]{AutF5_blocks.png}
+\vfill
+\end{center}
 
 \end{frame}
 
 \begin{frame}
 \centering
-\begin{tikzpicture}
-\draw [thin, draw=black!20, fill=blue!10] (0,0) grid (10.18,-10.18) rectangle (0,0);
-\node at (8, -8.5) {Original sdp constraint};
-\node at (.5,-.5) {\includegraphics[width=1cm]{AutF5_blocks.png}};
+\begin{tikzpicture}[scale=0.9]
+\draw [thin, draw=black!20, fill=blue!5] (0,0) grid (10.18,-10.18) rectangle (0,0);
+\node at (6.5, -9.5) {Original sdp constraint ($4\, 641 \times 4\, 641$)};
+\node at (.5,-.5) {\includegraphics[width=0.9cm]{AutF5_blocks.png}};
+% \node at (.5,-.5) };
 
 \end{tikzpicture}
 
