@@ -161,8 +161,9 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
 \end{frame}
 
 \begin{frame}[fragile]{Implementing group action}
-\footnotesize
-
+  \begin{itemize}
+    \normalsize\item implement methods from \texttt{GroupsCore.jl} API for \texttt{DihedralGroup}
+  \footnotesize
   \begin{minted}{julia}
   import GroupsCore
   struct DihedralGroup <: GroupsCore.Group ... end
@@ -170,11 +171,14 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
       ...
   end
   \end{minted}
-\normalsize
-  \begin{itemize}
-    \item implement methods from \texttt{GroupsCore.jl} API for \texttt{DihedralGroup}
-    \item implement action methods from \texttt{SymbolicWedderburn} for \texttt{DihedralAction}
+  \item implement action methods from \texttt{SymbolicWedderburn} for \texttt{DihedralAction}
+  \begin{minted}{julia}
+  import SymbolicWedderburn
+  SymbolicWedderburn.action(::OnSign, p::Permutation,
+      mono::AbstractMonomial) = ...
+  \end{minted}
   \end{itemize}
+  
 \end{frame}
 
 \begin{frame}{Behind the scenes: \texttt{SymbolicWedderburn.jl}}
