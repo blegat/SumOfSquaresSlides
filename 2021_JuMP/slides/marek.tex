@@ -98,17 +98,14 @@ Isotypical blocks when acting on $[1, x_1, x_2, x_3, x_4, x_5]$:
 
 \end{frame}
 
-\begin{frame}[fragile]{Even symmetry example}
+\begin{frame}[fragile]{Even symmetry example\citefoot{\gatpar{}: Example~5.1}}
 \footnotesize
 \begin{minted}{julia}
   struct OnSign <: Symmetry.OnMonomials end
-  # <: SymbolicWedderburn.Action
+  # <: SymbolicWedderburn.Action, corresponds to x → -x
   SymbolicWedderburn.action(::OnSign, p::Permutation,
       mono::AbstractMonomial) = sign(p)^degree(mono)*mono
-  # corresponds to x → -x
-
   G = PermGroup([perm"(1,2)"])
-
   @polyvar x
   f = x^6 - 2x^4 + 2x^2
   basis = monomials(x, 0:(maxdegree(f)÷2))
@@ -130,10 +127,12 @@ Isotypical blocks when acting on $[1, x_1, x_2, x_3, x_4, x_5]$:
   V = (V_1' \oplus V_1') \oplus (V_2' \oplus V_2')
 \]
 
+  \vspace{-1em}
+
 Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
 \end{frame}
 
-\begin{frame}[fragile]{Dihedral symmetry example}
+\begin{frame}[fragile]{Dihedral symmetry example\citefoot{\gatpar{}: Example~5.4}}
 \footnotesize
   \begin{minted}{julia}
   @polyvar x y
@@ -143,6 +142,9 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
       SymbolicWedderburn.ByLinearTransformation end
   \end{minted}
   The action is a mixture of changing sign and permuting variables.
+
+  \vspace{-2em}
+
   \begin{align*}
     B_1 = [x^2 + y^2, 1], & \qquad m_1 = 2, d_1 = 1,\\
     B_2 = [x^3, x^2y, xy^2, y^3, x, y], & \qquad m_2 = 3, d_2 = 2,\\
@@ -150,7 +152,11 @@ Naive formulation $4\times 4$-psd; with symmetry: $2\times 2$, $2\times 2$-psd.
     B_4 = [x^2 - y^2], & \qquad m_4 = d_4 = 1,
   \end{align*}
 
+  \vspace{-1em}
+
   $10 \times 10$-psd into $2 \times 2$, $3 \times 3$, $1 \times 1$, $1 \times 1$-psd.
+
+  \vspace{-1em}
 
   \alert{Non}-commutative groups allow $d_i > 1$ $\to$ \alert{better} for the symmetrization!
 \end{frame}
