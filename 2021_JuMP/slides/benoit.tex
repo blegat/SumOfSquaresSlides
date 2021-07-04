@@ -129,9 +129,9 @@
 \end{frame}
 
 \begin{frame}{Schur lemma}
-  \noindent$(\induced_i)_i\subseteq \R^{\alert{n} \times \alert{n}}$ \emph{reducible} if $\exists \{0\} \subset \mathcal{V} \subseteq \R^n$ s.t. $\forall i, \induced_i \mathcal{V} \subseteq \mathcal{V}$.
+  \noindent$(\induced_i)_i\subseteq \R^{\alert{d} \times \alert{d}}$ \emph{reducible} if $\exists \{0\} \subset \mathcal{V} \subseteq \R^d$ s.t. $\forall i, \induced_i \mathcal{V} \subseteq \mathcal{V}$.
 
-  \noindent$(\induceda_i)_i, (\inducedb_i)_i \subseteq \R^{n \times n}$ \emph{equivalent} if $\exists T$ s.t. $\forall i, \induceda_i = T\inducedb_iT^{-1}$.
+  \noindent$(\induceda_i)_i, (\inducedb_i)_i \subseteq \R^{d \times d}$ \emph{equivalent} if $\exists T$ s.t. $\forall i, \induceda_i = T\inducedb_iT^{-1}$.
 
   If $(\induceda_i)_i, (\inducedb_i)_i$ are irreducible and inequivalent, then
   $$
@@ -169,7 +169,7 @@
   $$
 
   If $(\induced_i)_i$ is irreducible, then (permuting rows/columns give
-  $I_{\alert{n}} \otimes C$)
+  $I_{\alert{d}} \otimes C$)
   $$
   %\begin{bmatrix}
   %  Q_{11} & Q_{12}\\
@@ -194,7 +194,7 @@
   \Rightarrow
   %\quad
   \exists C \in \SymK[2] \text{ s.t. }
-  Q = C \otimes I_{\alert{n}} =
+  Q = C \otimes I_{\alert{d}} =
   \begin{bmatrix}
     c_{1,1}I & c_{1,2}I\\
     c_{1,2}I & c_{2,2}I
@@ -203,9 +203,9 @@
    %Q_{21} = Q_{12} = 0.
   $$
 
-  $$\forall i, Q (\induced_i \otimes I_{\textcolor{blue}{m}}) = (\induced_i \otimes I_{\textcolor{blue}{m}}) Q \Rightarrow Q = C \otimes I_{\alert{n}}, C \in \SymK[{\textcolor{blue}{m}}] \quad \text{Note }{\textcolor{blue}{m}} \leftrightarrow \alert{n}$$
+  $$\forall i, Q (\induced_i \otimes I_{\textcolor{blue}{m}}) = (\induced_i \otimes I_{\textcolor{blue}{m}}) Q \Rightarrow Q = C \otimes I_{\alert{d}}, C \in \SymK[{\textcolor{blue}{m}}] \quad \text{Note }{\textcolor{blue}{m}} \leftrightarrow \alert{d}$$
 
-  \noindent {\tiny Sagan, \emph{The symmetric group}, Springer Science \& Business Media, 2001: Definition~1.4.5, Definition~1.6.2, Example~1.7.2, Example~1.7.3 (adapted from $\mathbb{C}^{n \times n}$ to symmetric matrices $\SymK \subseteq \mathbb{R}^{n \times n}$)}
+  \noindent {\tiny Sagan, \emph{The symmetric group}, Springer Science \& Business Media, 2001: Definition~1.4.5, Definition~1.6.2, Example~1.7.2, Example~1.7.3 (adapted from $\mathbb{C}^{d \times d}$ to symmetric matrices $\SymK \subseteq \mathbb{R}^{d \times d}$)}
 \end{frame}
 
 \begin{frame}[fragile]
