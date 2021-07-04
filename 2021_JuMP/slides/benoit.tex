@@ -89,7 +89,8 @@
 \begin{frame}{SDP solvers}
   For $n$-variate polynomial of degree $2d$:
   $N = {n + d \choose n}, m = {n + 2d \choose n}$.
-  \begin{block}{Complexity of second order interior point solvers}
+
+  \begin{block}{Complexity of second order interior point solvers\citefoot{Monteiro, Todd. ``Path-following methods.'' \emph{Handbook of semidefinite programming}. 2000. 267-306.}}
     Time:
     $\bigoh((mN + m^2)N^{5/2}\log(\varepsilon))$.
     Space:
@@ -97,7 +98,14 @@
 
     E.g. CSDP, DSDP, Hypatia, MOSEK, SDPA, SDPT3, SeDuMi.
   \end{block}
-  Too much space needed for large scale problems, alternatives:
+
+  \vspace{-1em}
+
+  %Too much space needed for large scale problems, alternatives:
+  Alternatives:
+
+  \vspace{-1em}
+
   \begin{itemize}
   %\begin{block}{First order methods}
     \item
@@ -121,7 +129,7 @@
 \end{frame}
 
 \begin{frame}{Schur lemma}
-  \noindent$(\induced_i)_i\subseteq \R^{n \times n}$ \emph{reducible} if $\exists \{0\} \subset \mathcal{V} \subseteq \R^n$ s.t. $\forall i, \induced_i \mathcal{V} \subseteq \mathcal{V}$.
+  \noindent$(\induced_i)_i\subseteq \R^{\alert{n} \times \alert{n}}$ \emph{reducible} if $\exists \{0\} \subset \mathcal{V} \subseteq \R^n$ s.t. $\forall i, \induced_i \mathcal{V} \subseteq \mathcal{V}$.
 
   \noindent$(\induceda_i)_i, (\inducedb_i)_i \subseteq \R^{n \times n}$ \emph{equivalent} if $\exists T$ s.t. $\forall i, \induceda_i = T\inducedb_iT^{-1}$.
 
@@ -161,7 +169,7 @@
   $$
 
   If $(\induced_i)_i$ is irreducible, then (permuting rows/columns give
-  $I \otimes C$)
+  $I_{\alert{n}} \otimes C$)
   $$
   %\begin{bmatrix}
   %  Q_{11} & Q_{12}\\
@@ -185,8 +193,8 @@
   %\quad
   \Rightarrow
   %\quad
-  \exists C \in \SymK \text{ s.t. }
-  Q = C \otimes I =
+  \exists C \in \SymK[2] \text{ s.t. }
+  Q = C \otimes I_{\alert{n}} =
   \begin{bmatrix}
     c_{1,1}I & c_{1,2}I\\
     c_{1,2}I & c_{2,2}I
@@ -195,12 +203,14 @@
    %Q_{21} = Q_{12} = 0.
   $$
 
-  \noindent {\tiny Sagan, \emph{The symmetric group}, Springer Science \& Business Media, 2001: Definition~1.4.5, Definition~1.6.2, Example~1.7.2, Example~1.7.3 (adapted from $\mathcal{C}^{n \times n}$ to symmetric matrices $\SymK \subseteq \mathcal{R}^{n \times n}$)}
+  $$\forall i, Q (\induced_i \otimes I_{\textcolor{blue}{m}}) = (\induced_i \otimes I_{\textcolor{blue}{m}}) Q \Rightarrow Q = C \otimes I_{\alert{n}}, C \in \SymK[{\textcolor{blue}{m}}] \quad \text{Note }{\textcolor{blue}{m}} \leftrightarrow \alert{n}$$
+
+  \noindent {\tiny Sagan, \emph{The symmetric group}, Springer Science \& Business Media, 2001: Definition~1.4.5, Definition~1.6.2, Example~1.7.2, Example~1.7.3 (adapted from $\mathbb{C}^{n \times n}$ to symmetric matrices $\SymK \subseteq \mathbb{R}^{n \times n}$)}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Invariance and convexity}
-  \begin{block}{Theorem}
+  \begin{block}{Theorem\footnote{\tiny \gatpar{}: Theorem~3.3}}
     Objective and feasible sets are \alert{invariant} and \alert{convex}
     $\to$
     can restruct to invariant solutions.
@@ -226,6 +236,4 @@
   \begin{center}
     How to \alert{simultaneously} block-diagonalize $(\rho_i)_i$ ?
   \end{center}
-
-  \noindent {\tiny \gatpar{}: Theorem~3.3}
 \end{frame}
