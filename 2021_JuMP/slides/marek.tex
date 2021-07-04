@@ -82,13 +82,13 @@ Isotypical blocks when acting on $[1, x_1, x_2, x_3, x_4, x_5]$:
   @objective(model, Max, t)
   pattern = Symmetry.Pattern(G, Symmetry.VariablePermutation())
   poly = sum(x) + sum(x.^2)
-  con_ref = @constraint(model, poly - t in SOSCone(), symmetry = pattern)
+  @constraint(model, poly - t in SOSCone(), symmetry = pattern)
   optimize!(model)
 \end{minted}
 
 \normalsize
 
-Naive formulation $Q$ is $5\times 5$; with symmetry:
+  Naive: 15 vars 15 constrs, $Q$ is $5\times 5$; Symmetry: 5 vars 5 constrs,
   \[ Q = Q_1 \oplus (Q_{\alert{2}} \oplus Q_{\alert{2}}) \oplus Q_3 \qquad Q_1 \text{ is }2\times 2, Q_2 \text{ is }1\times 1, Q_3 \text{ is }1\times 1 \]
   %\[ m_1 \times m_1, m_2 \times m_2, m_3 \times m_3 \qquad 2\times 2, 1\times 1, 1\times 1 \]
 
