@@ -1,4 +1,4 @@
 Sum-of-squares optimization in Julia
 ====================================
 
-Slides for the presentation "Sum-of-squares optimization in Julia" at the [JuMP Developers Meetup](http://www.juliaopt.org/developersmeetup/).
+Slides for the different presentations on [SumOfSquares.jl](https://github.com/jump-dev/SumOfSquares.jl).
