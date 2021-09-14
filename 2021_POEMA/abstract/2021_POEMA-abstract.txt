@@ -1,0 +1,15 @@
+Sum-of-Squares optimization with JuMP in Julia
+
+In this tutorial, we show how to formulate and solve Sum-of-Squares
+programs using the SumOfSquares extension of the JuMP framework in Julia.
+
+We start from the basics of how to create the polynomials, the JuMP model and
+interpret the results provided by the solver.
+
+We then cover the different caveats and challenges that are crucial for both
+performance and numerical accuracy.
+
+Finally, we survey in detail the different features of Sum-of-Squares that can
+help circumventing these issues such as using mutable arithmetic, choosing the
+right certificate, changing the polynomial basis, or exploiting sparsity and
+symmetry.
