@@ -1,2 +1,2 @@
-NAME=2021_INFORMS_Symmetry
+NAME=2021_INFORMS
 include ../../root.mk
