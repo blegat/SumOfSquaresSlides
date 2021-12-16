@@ -1,0 +1,105 @@
+\documentclass{beamer}
+\usetheme[block=fill]{metropolis}
+%\setbeamersize{text margin left=.2cm,text margin right=.2cm}
+\usepackage{graphicx}
+\graphicspath{{../../images/}}
+%\usepackage[french]{babel}
+%\usepackage{listings}
+%\usepackage{lipsum}
+\usepackage{boolexpr}
+\usepackage{kpfonts}
+\usepackage{caption}
+\usepackage{wrapfig}
+%\usepackage{chngcntr}
+\usepackage[labelformat=empty]{caption}
+\usepackage[official]{eurosym}
+
+\newcommand{\induced}{\rho}
+\newcommand{\induceda}{\induced^{(1)}}
+\newcommand{\inducedb}{\induced^{(2)}}
+
+%\newcommand{\gatpar}{Gatermann, Parrilo, \emph{{S}ymmetry groups, semidefinite programs, and sums of squares}, Journal of Pure and Applied Algebra, 2004}
+\newcommand{\gatpar}{Gatermann, Parrilo, \emph{{S}ymmetry groups, semidefinite programs, and sums of squares}, 2004}
+\newcommand{\citefoot}[1]{\footnote{\tiny #1}}
+
+\usepackage{minted}
+
+\usepackage{siunitx}
+
+% http://tex.stackexchange.com/questions/114830/how-can-i-use-lvert-and-rvert-norm-symbols-x-with-the-iwona-math-font
+\usepackage[math]{iwona}
+\usepackage{scalerel}
+\def\lVert{\mid\!\mid}
+\def\rVert{\mid\!\mid}
+
+\usepackage[normalem]{ulem}
+%\newcommand{\Adj}{\mathbf{A}}
+\usepackage{mathtools}
+
+\usepackage{../../custom}
+\usepackage{amsfonts}
+%\newcommand{\jsrcodepath}{../../code}
+%\usepackage{jsr}
+
+\newcommand{\expe}[2]{\la #1, #2 \ra}
+
+\usepackage{framed}
+
+%\usepackage{mathtools,xparse}
+%\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand\Wider[2][3em]{%
+\makebox[\linewidth][c]{%
+  \begin{minipage}{\dimexpr\textwidth+#1\relax}
+  \raggedright#2
+  \end{minipage}%
+  }%
+}
+
+\newcommand{\aeur}{\alpha_\text{\euro}}
+\newcommand{\adol}{\alpha_\$}
+\newcommand{\apou}{\alpha_\text{\pounds}}
+
+% footnote without number: \footnote[]{some text}
+% source: https://tex.stackexchange.com/questions/170511/footnotes-without-numbering
+\let\svthefootnote\thefootnote
+\textheight 1in
+\newcommand\blankfootnote[1]{%
+  \let\thefootnote\relax\footnotetext{#1}%
+  \let\thefootnote\svthefootnote%
+}
+\let\svfootnote\footnote
+\renewcommand\footnote[2][?]{%
+  \if\relax#1\relax%
+    \blankfootnote{#2}%
+  \else%
+    \if?#1\svfootnote{#2}\else\svfootnote[#1]{#2}\fi%
+  \fi
+}
+
+\newcommand{\comment}[1]{\noindent 
+\begin{footnotesize}
+{\color{black!40} #1}
+\end{footnotesize}
+}
+
+\title{Symmetry Reduction in Semidefinite Optimization}
+\date{(joint work with Tillman Weisser)}
+\author{
+Marek Kaluba \tiny KIT, Karlsruhe, Germany \normalsize
+\and Beno\^it Legat \tiny MIT, Boston, US \normalsize}
+\institute{INFORMS 2021}
+%\institute{UCLouvain\\
+%           Massachusetts Institute of Technology (MIT)\\
+%           Rice University\\
+%           Los Alamos National Laboratory (LANL)}
+
+% https://tex.stackexchange.com/questions/426088/texlive-pretest-2018-beamer-and-subfig-collide
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
+\begin{document}
+  \maketitle
+
+  \input{marek.tex}
+
+\end{document}
