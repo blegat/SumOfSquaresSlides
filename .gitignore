@@ -10,3 +10,7 @@ _minted*
 *.snm
 *.toc
 *.vrb
+*.bbl
+*.bcf
+*.blg
+*.run.xml
