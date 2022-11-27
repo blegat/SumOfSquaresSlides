@@ -1,2 +1,2 @@
 TYPE=slides
-include ../2021_JuMP.mk
+include ../2021_INFORMS.mk
