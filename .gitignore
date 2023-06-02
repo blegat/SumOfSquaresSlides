@@ -16,3 +16,4 @@ _minted*
 *.run.xml
 *.pyg
 *.synctex.gz
+*-blx.bib
