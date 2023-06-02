@@ -1,0 +1,398 @@
+\documentclass{beamer}
+\usetheme[block=fill]{metropolis}
+%\setbeamersize{text margin left=.2cm,text margin right=.2cm}
+\usepackage{graphicx}
+\graphicspath{{../../images/}}
+%\usepackage[french]{babel}
+%\usepackage{listings}
+%\usepackage{lipsum}
+
+
+\usepackage{kpfonts}
+\usepackage[style=alphabetic,backend=bibtex]{biblatex}
+\addbibresource{../../biblio.bib}
+%\usepackage{boolexpr}
+%\usepackage{caption}
+%\usepackage{wrapfig}
+%\usepackage{chngcntr}
+%\usepackage[labelformat=empty]{caption}
+%\usepackage[official]{eurosym}
+
+\newcommand{\newtonpoly}[1]{\mathcal{N}(#1)}
+\newcommand{\supfun}[2]{\delta^*(#1|#2)}
+
+\renewcommand*{\footnotesize}{\tiny}
+
+% Citations in footnote
+% https://tex.stackexchange.com/a/29931/38244
+
+\DeclareCiteCommand{\footpartcite}[\mkbibfootnote]
+{\usebibmacro{prenote}}%
+{\usebibmacro{citeindex}%
+    \mkbibbrackets{\usebibmacro{cite}}%
+    \setunit{\addnbspace}
+    \printnames{labelname}%
+    \setunit{\labelnamepunct}
+    \printfield[citetitle]{title}%
+    \newunit
+    \printfield[]{year}}
+{\addsemicolon\space}
+{\usebibmacro{postnote}}
+
+\setbeamertemplate{footnote}{\insertfootnotetext}
+
+\newcommand{\induced}{\rho}
+\newcommand{\induceda}{\induced^{(1)}}
+\newcommand{\inducedb}{\induced^{(2)}}
+
+%\newcommand{\gatpar}{Gatermann, Parrilo, \emph{{S}ymmetry groups, semidefinite programs, and sums of squares}, Journal of Pure and Applied Algebra, 2004}
+\newcommand{\gatpar}{Gatermann, Parrilo, \emph{{S}ymmetry groups, semidefinite programs, and sums of squares}, 2004}
+\newcommand{\citefoot}[1]{\footnote{\tiny #1}}
+
+\usepackage{siunitx}
+
+% http://tex.stackexchange.com/questions/114830/how-can-i-use-lvert-and-rvert-norm-symbols-x-with-the-iwona-math-font
+\usepackage[math]{iwona}
+\usepackage{scalerel}
+\def\lVert{\mid\!\mid}
+\def\rVert{\mid\!\mid}
+
+\usepackage[normalem]{ulem}
+%\newcommand{\Adj}{\mathbf{A}}
+\usepackage{mathtools}
+
+\usepackage{../../custom}
+\usepackage{amsfonts}
+%\newcommand{\jsrcodepath}{../../code}
+%\usepackage{jsr}
+
+\newcommand{\expe}[2]{\la #1, #2 \ra}
+
+\usepackage{framed}
+
+%\usepackage{mathtools,xparse}
+%\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand\Wider[2][3em]{%
+\makebox[\linewidth][c]{%
+  \begin{minipage}{\dimexpr\textwidth+#1\relax}
+  \raggedright#2
+  \end{minipage}%
+  }%
+}
+
+\newcommand{\aeur}{\alpha_\text{\euro}}
+\newcommand{\adol}{\alpha_\$}
+\newcommand{\apou}{\alpha_\text{\pounds}}
+
+\title{Exploiting the Structure of a Polynomial Optimization Problem}
+\date{May 14th, 2023}
+\author{Beno\^it Legat}
+\institute{SIAM Dynamical Systems 2023}
+%\institute{UCLouvain\\
+%           Massachusetts Institute of Technology (MIT)\\
+%           Rice University\\
+%           Los Alamos National Laboratory (LANL)}
+
+% https://tex.stackexchange.com/questions/426088/texlive-pretest-2018-beamer-and-subfig-collide
+\makeatletter
+\let\@@magyar@captionfix\relax
+\makeatother
+\begin{document}
+  \maketitle
+
+\begin{frame}{Table of contents}
+    \tableofcontents
+\end{frame}
+
+\section{Challenges}
+
+\begin{frame}{Sum-of-Squares Programming}
+    \begin{block}{It may look simple at first...}
+        $p(x)$ is SOS $\to$
+        $p(x) = b(x)^\Tr Q b(x)$
+        where $Q$ is PSD.
+    \end{block}
+    \begin{itemize}
+      \item PSD $\to$ (scaled) diagonally dominant ? \emph{DSOS/SDSOS}
+      \item \textbf{reformulation as geometric or standard conic form ?}
+      \item \textbf{what polynomial space for $b(x)$ ? \emph{Newton polytope}}
+      \item which basis for $b(x)$ ?
+      \item which basis for $p - b^\Tr Q b$ ? \alert{Ill-conditioned} change of basis ?
+      \item any group symmetry ? Can we reduce \alert{symbolically} ?
+      \item \emph{Chordal} sparsity ? \emph{Term} sparsity ? \emph{Sign} symmetry ?
+      \item extract roots of $p(x)$ from dual \alert{moment matrix} ?
+      \item Different formulation ? \alert{Hypatia}/\alert{Alphone}, Burer-Monteiro ?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{With constraints}
+    $$p(x) = s_0(x) + \sum \lambda_i(x) h_i(x) + \sum s_i(x) g_i(x), \quad s_i(x) = b_i(x)^\Tr Q_i b_i(x)$$
+    \begin{itemize}
+      \item Explicit $\lambda_i$ or remainder with Gr\"{o}bner basis ?
+      \item Putinar or Sch\"{u}dgen certificate ?
+      \item \textbf{what polynomial space for $b_i(x)$ ? \emph{Newton polytope}}
+      \item which basis for $b_i(x)$ ?
+      \item ...
+    \end{itemize}
+\end{frame}
+
+\section{Geometric or standard form}
+
+\begin{frame}{Geometric and standard form}
+    \emph{Standard conic form} SDP:
+    \begin{equation*}
+          \begin{array}{rl}
+              \min\limits_{Q \in \SymK[n]} & \la C, Q \ra\\
+              \text{subject to:} & \la A_i, Q \ra = b_i, \quad i=1,2,\ldots,m\\
+                                 & Q \succeq 0,
+          \end{array}
+      \end{equation*}
+      \emph{Geometric conic form} SDP:
+      \begin{equation*}
+          \begin{array}{rl}
+              \max\limits_{y \in \mathbb{R}^m} & \la b, y \ra\\
+              \text{subject to:} & C \succeq \sum_{i=1}^m A_i y_i\\
+                                 & y\ \mathsf{free},
+          \end{array}
+      \end{equation*}
+    \begin{align*}
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Standard conic form}
+    \begin{block}{Notation}
+        \begin{align*}
+            p(x) & = \sum_{\alpha} p_\alpha x^\alpha &
+            \mathcal{A}_\alpha &= \setbuild{(\beta, \gamma) \in b^2}{x^\beta x^\gamma = x^\alpha}
+        \end{align*}
+    \end{block}
+    \begin{block}{Standard conic form}
+        \begin{align*}
+            \la \sum_{(\beta, \gamma) \in \mathcal{A}_\alpha} e_\beta e_\gamma^\Tr, Q \ra & = p_\alpha, \quad\forall \alpha\\
+            Q & \succeq 0
+        \end{align*}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Geometric conic form}
+    \begin{block}{Notation}
+        \begin{align*}
+            p(x) & = \sum_{\alpha} p_\alpha x^\alpha &
+            \mathcal{A}_\alpha &= \setbuild{(\beta, \gamma) \in b^2}{x^\beta x^\gamma = x^\alpha}
+        \end{align*}
+        Let $(\beta_\alpha, \gamma_\alpha) \in \mathcal{A}_\alpha$.
+    \end{block}
+    \begin{block}{Geometric conic form}
+        \begin{align*}
+            \sum_\alpha
+            p_\alpha e_{\beta_\alpha} e_{\gamma_\alpha}^\Tr +
+            \sum_{(\beta, \gamma) \in \mathcal{A}_\alpha \setminus (\beta_\alpha, \gamma_\alpha)}
+            y_{\beta,\gamma} (e_\beta e_\gamma - e_{\beta_\alpha} e_{\gamma_\alpha}^\Tr)^\Tr
+            & \succeq 0\\
+            y_{\beta,\gamma} & \text{ free}
+        \end{align*}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Which one do I choose ?}
+    \begin{itemize}
+        \item \alert{Standard} conic form is good when \alert{low} number of \alert{variables} and \alert{high degree}.
+        Univariate $2d$: standard gives \alert{linear} $m = 2d + 1$
+        and geometric gives \alert{quadratic} $m = d(d + 1)/2 - (2d + 1)$.
+        \item \alert{Geometric} conic form is good when \alert{high} number of \alert{variables} and \alert{low degree}.
+        Quadratic: standard gives \alert{quadratic} $m$ and geometric gives $m = 0$.
+    \end{itemize}
+
+    What's the \alert{threshold} used in practice ?
+    None, \alert{user} chooses !
+
+    \uncover<2>{
+        In \textsc{yalmip}, \texttt{sosmodel} uses geometric and \texttt{solvesos} uses standard.
+
+        In \jlpkg{SumOfSquares}, formulation matches \alert{solver}'s conic form !
+        Hence the importance of playing with \alert{\jlpkg{Dualization}} !
+    }
+\end{frame}
+
+\section{Newton polytope}
+
+\begin{frame}{Newton polytope}
+    \begin{block}{Notation}
+        \begin{align*}
+            p(x) & = \sum_{\alpha} p_\alpha x^\alpha &
+            \mathcal{A}_\alpha &= \setbuild{(\beta, \gamma)}{x^\beta x^\gamma = x^\alpha}
+        \end{align*}
+    \end{block}
+    \begin{block}{Key observation 1}
+        If $\mathcal{A}_\alpha = \{(\beta,\beta)\}$ and $p_\alpha = 0$ then $Q_{\beta,\beta} = 0$.
+    \end{block}
+    \begin{block}{Key observation 2}
+        If $Q_{\beta,\beta} = 0$ then $Q_{\beta,\gamma} = Q_{\gamma,\beta} = 0$, $\forall \gamma$.
+    \end{block}
+\end{frame}
+
+
+
+\begin{frame}{Newton chip method}
+  %\begin{algorithm}[H]
+  %  \caption{Newton chip method}
+    \begin{algorithmic}
+      \WHILE{$\exists \alpha, \beta$ s.t. $\mathcal{A}_\alpha = \{(\beta,\beta)\}, p_\alpha = 0$}
+        \STATE remove $\beta$ from $b$
+      \ENDWHILE
+    \end{algorithmic}
+  %\end{algorithm}
+    \begin{itemize}
+      \item Easy to implement
+      \item Easy to generalize, e.g., \autocite[Section~2.3]{burgdorf2016optimization}\footpartcite{burgdorf2016optimization}
+      \item Costly : \alert{quadratic} in length of $b$ $\to$ best trim down $b$ before
+      \item \alert{Signed} variant: change $p_\alpha \alert{=} 0$ into $p_\alpha \alert{\le} 0$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Newton polytope}
+    \begin{block}{Polytopic reformulation of key observation 2}
+        $\newtonpoly{b} + \newtonpoly{b} = 2\newtonpoly{b}$ where $+$ is Minkwoski sum.
+    \end{block}
+    So the result of the commucative unsigned newton chip method is:
+    $$\newtonpoly{b} = \lfloor \mathcal{N}(p) / 2 \rfloor$$
+    \vspace{-2em}
+    \begin{itemize}
+        \item Less costly because not quadratic in length of $b$
+        \item How to enumerate the elements given V-rep of $\lfloor \mathcal{N}(p) / 2 \rfloor$ ?
+        \begin{itemize}
+            \item solve LP's~\autocite{Lofberg2009}\footpartcite{Lofberg2009}
+            \item Compute H-rep with CDD/LRS/PPL~\autocite{prajna2004new}\footpartcite{prajna2004new}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Wait, isn't polyhedral computation not cheap ?}
+    If polyhedral computation is costly, we might as well just do Newton chip method!
+
+    We can at least compute a cheap outer approximation of
+    $$\lfloor \mathcal{N}(p) / 2 \rfloor$$
+    \begin{block}{Outer-approximation of \autocite{prajna2004new}\footpartcite{prajna2004new}}
+        \begin{itemize}
+            \item Min and max total degree
+            \item Min and max degree of each variable
+            \item Min and max degree groups (\emph{multipartite})
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\begin{frame}{Support function interpretation}
+    $2\newtonpoly{b} \subseteq \newtonpoly{p}$ is equivalent to
+    \[ \forall y \in \R^n, 2\supfun{y}{\newtonpoly{b}} \le \supfun{y}{\newtonpoly{p}}. \]
+    Generalizes previous cases:
+    \begin{itemize}
+        \item Max total degree: $y = \mathbf{1}$
+        \item Min total degree: $y = -\mathbf{1}$
+        \item Max degree of $x_i$: $y = e_i$
+        \item Min degree of $x_i$: $y = -e_i$
+        \item Max degree group $\{x_{i_1}, \ldots, x_{i_j}\}$, $y = e_{i_1} + \cdots + e_{i_j}$
+        \item Min degree group $\{x_{i_1}, \ldots, x_{i_j}\}$, $y = -e_{i_1} - \cdots - e_{i_j}$
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Signed Newton chip for Putinar}
+    \begin{block}{Notation}
+        \begin{align*}
+            g_0 & = 1 &
+            \mathcal{A}_{\alpha}^i &= \setbuild{(\beta, \gamma) \in b_i^2}{x^\beta x^\gamma = x^\alpha}
+        \end{align*}
+    \end{block}
+    \begin{block}{Generalized key observation 1}
+        If
+        \[ \not\exists i, \beta \neq \gamma \in b_i, \delta \in \newtonpoly{g_i} \text{ s.t. } x^\delta x^\gamma x^\beta = x^\alpha \]
+        and
+        \[ \setbuild{g_{i,\delta}}{\exists \beta_i \in b_i \text{ s.t. } x^\delta x^{2\beta_i} = x^\alpha} \]
+        has constant sign and $p_\alpha$ is zero or has opposite sign,
+        then $Q_{i,\beta_i,\beta_i} = 0$
+    \end{block}
+\end{frame}
+
+\begin{frame}{Support function for Putinar}
+    \[ \forall y \in \R^n, \supfun{y}{\newtonpoly{p}} = \supfun{y}{\newtonpoly{\sum g_i s_i}}. \]
+    Could be \alert{cancellations} if \alert{negative} coefficients in $g_i$
+    \[ \forall y \in \R^n, \supfun{y}{\newtonpoly{p}} \subseteq \supfun{y}{\sum \newtonpoly{g_i} + \newtonpoly{s_i}}. \]
+    \alert{Support} function on \alert{Minkowski} sum:
+    \begin{align*}
+      \supfun{y}{\mathcal{S} + \mathcal{T}} & = \supfun{y}{\mathcal{S}} + \supfun{y}{\mathcal{T}}\\
+      \forall y \in \R^n, \supfun{y}{\newtonpoly{p}} & \subseteq \sum \supfun{y}{\newtonpoly{g_i}} + \supfun{y}{\newtonpoly{s_i}}\\
+                                                     & \subseteq \sum \supfun{y}{\newtonpoly{g_i}} + 2\supfun{y}{\newtonpoly{b_i}}
+    \end{align*}
+    If support function uniquely maximized by \alert{diagonal} elements $Q_{i_1}, \ldots, Q_{i_j}$
+    with same signs $g_{i_1}, \ldots, g_{i_j}$.
+    If $\supfun{y}{\newtonpoly{p}}$ \alert{strictly} smaller or different sign, \alert{reduce} by removing $b_{i_1}, \ldots, b_{i_j}$.
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Newton polytope vs sparsity/symmetry}
+    \begin{itemize}
+        \item Newton polytope \alert{reduces} the basis $b$
+        \item Sparsity/symmetry try to block diagonalize $b$, but $b$ is \alert{not reduced},
+    \end{itemize}
+    \alert{Complementary} reductions, a good Newton polytope reduction is as important as sparsity/symmetry reduction.
+\end{frame}
+
+\begin{frame}{Conclusion}
+    \begin{itemize}
+        \item Always try to solve your problem with and without \jlpkg{Dualization}
+        \item Specify constraints with \texttt{domain} keyword to get Newton polytope-reduced bases.
+        \item Implemented in \jlpkg{SumOfSquares}, feedback is welcome!
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Algebraic geometry}
+    \begin{itemize}
+        \item Interface \jlpkg{MultivariatePolynomials} with implementations
+            \begin{itemize}
+                \item \jlpkg{DynamicPolynomials}
+                \item \jlpkg{TypedPolynomials}
+                \item \jlpkg{SIMDPolynomials}
+                \item \jlpkg{CondensedMatterSOS}
+            \end{itemize}
+        \item Polynomials bases in \jlpkg{MultivariateBases}
+        \item Gröbner bases and algebraic system solving in \jlpkg{SemialgebraicSets}.
+            Interface with Buchberger and multiplication matrices by default
+            with other implementations:
+            \begin{itemize}
+                \item \jlpkg{HomotopyContinuation}
+                \item \jlpkg{Groebner}
+            \end{itemize}
+        \item Extract roots from moment matrix with \jlpkg{MultivariateMoments}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Optimization with JuMP}
+    \begin{columns}
+    \begin{column}{0.9\textwidth}
+    \begin{itemize}
+        \item Solver interface \jlpkg{MathOptInterface} implemented by (SDP-only):
+        \begin{itemize}
+            \item Nonsymmetric cone interior point: \jlpkg{Hypatia}
+            \item \jlpkg{MosekTools}
+            \item ADMM: \jlpkg{SCS}, \jlpkg{COSMO}
+            \item MATLAB: \jlpkg{SeDuMi}, \jlpkg{SDPNAL}, \jlpkg{SDPT3}
+            \item C/C++: \jlpkg{CSDP}, \jlpkg{SDPA}, \jlpkg{DSDP}
+            \item Burer-Monteiro: \jlpkg{SDPLR}
+            \item BMI, NLSDP: \jlpkg{Penopt}
+        \end{itemize}
+        \item \jlpkg{JuMP} extension for optimization with polynomials \jlpkg{PolyJuMP}
+          \begin{itemize}
+            \item Solve KKT system with \jlpkg{SemialgebraicSets}
+            \item Sums of AM/GM Exponential (SAGE) : \url{https://github.com/jump-dev/SumOfSquares.jl/pull/240/}
+            \item Sum-of-Squares with \jlpkg{SumOfSquares}
+          \end{itemize}
+    \end{itemize}
+    \end{column}
+    \begin{column}{0.1\textwidth}
+    \includegraphics[scale=0.11]{JuMP.png}
+    \end{column}
+    \end{columns}
+\end{frame}
+
+
+\end{document}
