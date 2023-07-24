@@ -14,3 +14,5 @@ _minted*
 *.bcf
 *.blg
 *.run.xml
+*.pyg
+*.synctex.gz
