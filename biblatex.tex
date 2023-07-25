@@ -1,0 +1,33 @@
+% See https://tex.stackexchange.com/questions/469555/unicode-u301-error-in-biblatex-but-not-in-main-text-i
+
+\DeclareDatafieldSet{setall}{
+  \member[datatype=literal]
+  \member[datatype=name]
+  \member[field=journal]% journal is special since it is
+                        % actually journaltitle
+}
+
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map[overwrite, foreach={setall}]{
+      % \`{\i}
+      \step[fieldsource=\regexp{$MAPLOOP},
+            match=\regexp{\x{0131}\x{0300}},
+            replace=\regexp{\x{00EC}}]
+      % \'{\i}
+      \step[fieldsource=\regexp{$MAPLOOP},
+            match=\regexp{\x{0131}\x{0301}},
+            replace=\regexp{\x{00ED}}]
+      % \^{\i}
+      \step[fieldsource=\regexp{$MAPLOOP},
+            match=\regexp{\x{0131}\x{0302}},
+            replace=\regexp{\x{00EE}}]
+      % \"{\i}
+      \step[fieldsource=\regexp{$MAPLOOP},
+            match=\regexp{\x{0131}\x{0308}},
+            replace=\regexp{\x{00EF}}]
+    }
+  }
+}
+
+
