@@ -27,17 +27,27 @@
 \usepackage{../../custom}
 \usepackage{amsfonts}
 
+\usepackage{verbatim}
+
 %\usepackage[style=alphabetic,backend=bibtex]{biblatex}
 %\addbibresource{../../biblio.bib}
 %\input{../../biblatex.tex}
 
+\definecolor{julia_blue}{rgb}{0.251, 0.388, 0.847}
+\definecolor{julia_green}{rgb}{0.22 , 0.596, 0.149}
+\definecolor{julia_purple}{rgb}{0.584, 0.345, 0.698}
+\definecolor{julia_red}{rgb}{0.796, 0.235, 0.2  }
+
+\newcommand{\symvar}[1]{\textcolor{julia_red}{#1}}
+\newcommand{\decisionvar}[1]{\textcolor{julia_purple}{#1}}
+
 \usepackage{tikz}
 \usetikzlibrary{arrows,matrix,decorations.pathreplacing,positioning,chains,fit,shapes,calc,3d}
 \tikzset{box/.style={rectangle, draw=black, fill=black!8, align=center, rounded corners}}
-\tikzset{function/.style={rectangle, draw=aurore, fill=aurore!8, align=center, rounded corners}}
-\tikzset{solver/.style={rectangle, draw=canard, fill=canard!8, align=center, rounded corners}}
-\tikzset{optimizer/.style={rectangle, draw=frambo, fill=frambo!8, align=center, rounded corners}}
-\tikzset{alg/.style={rectangle, draw=lichen, fill=lichen!8, align=center, rounded corners}}
+\tikzset{function/.style={rectangle, draw=julia_purple, fill=julia_purple!8, align=center, rounded corners}}
+\tikzset{solver/.style={rectangle, draw=julia_blue, fill=julia_blue!8, align=center, rounded corners}}
+\tikzset{optimizer/.style={rectangle, draw=julia_red, fill=julia_red!8, align=center, rounded corners}}
+\tikzset{alg/.style={rectangle, draw=julia_green, fill=julia_green!8, align=center, rounded corners}}
 \tikzset{pkg/.style={rectangle, draw=black, fill=black!8, align=center, rounded corners}}
 
 % Citations in footnote
@@ -107,7 +117,6 @@
   
   \begin{block}{Easy or hard ?}
     \begin{itemize}
-      \item In general, \alert{NP-hard}
       \item If $p, g_i$ are convex and $h_i$ are linear, it is convex...
       \item ... but in general, it is \alert{NP-hard}
       \item Special case with $p = 0$ and $m_g = 0$,
@@ -118,9 +127,9 @@
 
 \begin{frame}{Two types of Lagrangian multipliers}
   \begin{block}{\alert{Constant} multipliers -- \alert{local} certificate -- KKT system}
-    Find $x \in \R^n, \lambda \in \R^{m_h}, \sigma \in \R^{m_g}$ s.t.
+    Find $\decisionvar{x} \in \R^n, \decisionvar{\lambda} \in \R^{m_h}, \decisionvar{\sigma} \in \R^{m_g}$ s.t.
     \[
-      p(x) + \sum_{i=1}^{m_h} \lambda_i h_i(x) + \sum_{i=1}^{m_g} \sigma_i^2 g_i(x) = 0
+      p(\decisionvar{x}) + \sum_{i=1}^{m_h} \decisionvar{\lambda_i} h_i(\decisionvar{x}) + \sum_{i=1}^{m_g} \decisionvar{\sigma_i}^2 g_i(\decisionvar{x}) = 0
     \]
   \end{block}
 %  \begin{block}{\alert{Polynomial} multipliers -- \alert{global} certificate -- Positivstellensatz}
@@ -130,9 +139,9 @@
 %    \]
 %  \end{block}
   \begin{block}{\alert{Polynomial} multipliers -- \alert{global} certificate -- Putinar}
-    Find $\gamma \in \R$ and polynomials $\lambda_i(x), \sigma_{i, j}(x) \in \R[x]$ s.t.
+    Find $\decisionvar{\gamma} \in \R$ and polynomials $\decisionvar{\lambda_i}(x), \decisionvar{\sigma_{i, j}}(x) \in \R[x]$ s.t.
     \[
-      p + \sum_{i=1}^{m_h} \lambda h_i + \sum_{i=1}^{m_g} \left(\sum_j \sigma_{i,j}^2\right) g_i = \gamma
+      \alert{\forall} \symvar{x} \in \R^n, \quad p(\symvar{x}) + \sum_{i=1}^{m_h} \decisionvar{\lambda_i}(\symvar{x}) h_i(\symvar{x}) + \sum_{i=1}^{m_g} \left(\sum_j \decisionvar{\sigma_{i,j}}^2(\symvar{x})\right) g_i(\symvar{x}) = \decisionvar{\gamma}
     \]
   \end{block}
 \end{frame}
@@ -163,6 +172,10 @@
       \draw[thick, -] (-0.1, 0.1) to (0.1, -0.1);
       \draw[thick] (-1, 0) circle (1);
       \draw[thick] (1, 0) circle (1);
+      \only<2>{
+        \draw[color=julia_red, thick, ->] (0, 0) to (-0.5, 0);
+        \draw[color=julia_red, thick, ->] (0, 0) to (0.5, 0);
+      }
     \end{tikzpicture}
   \end{center}
   \begin{block}{What went wrong ?}
@@ -173,7 +186,7 @@
 \end{frame}
 
 \begin{frame}{Solving the KKT system}
-  Given a system $S = \{\, x \mid h_i(x) = 0 \,\}$, for $i = 1, \ldots, m$,
+  Given a system $S = \{\, x \mid h_i(x) = 0 \,\}$, % for $i = 1, \ldots, m$,
   for any $\lambda \in \R[x]^m$,
   \[
     \sum_{i=1}^m \lambda_i(x) h_i(x) = 0, \qquad \forall x \in S.
@@ -183,53 +196,165 @@
   \[
     x_1^{\alpha_1}x_2^{\alpha_2} \cdots x_n^{\alpha_n} h_i
   \]
-  \emph{\alert{Macaulay} matrix} $M_d$ has these as rows if maxdegree below $d$.
+  \emph{\alert{Macaulay} matrix} $M_{\textcolor{julia_purple}{d}}$ has those of maxdegree below \textcolor{julia_green}{$d$} as rows
 
   Buchberger : \alert{Gaussian elimination} $\to$ \alert{numerically unstable}!
 
   \begin{itemize}
     \item Compute right null space $Z_d$ with SVD $\to$ \alert{numerically stable}!
-    \item \alert{Mind the gap} : rank of truncation of $Z_d$ equal to rank of $Z_d$
+    \item \alert{Mind the gap} : rank of \textcolor{julia_purple}{truncation} of $Z_d$ equal to rank of $Z_d$
     \item Gap condition is \alert{sufficient} for finding the solution from $Z_d$.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Obtaining the minimizers for Sum-of-Squares}
-  We search over \alert{dual} Lagrangian multipliers $\lambda_i(x)$, $\sigma_{i,j}(x)$.
-  But then what's the \alert{primal} $x$ ? Isn't it the dual of the dual ?
+    \[
+      \alert{\forall} \symvar{x} \in \R^n, \quad p(\symvar{x}) + \sum_{i=1}^{m_h} \decisionvar{\lambda_i}(\symvar{x}) h_i(\symvar{x}) + \sum_{i=1}^{m_g} \left(\sum_j \decisionvar{\sigma_{i,j}}^2(\symvar{x})\right) g_i(\symvar{x}) = \decisionvar{\gamma}
+    \]
+
+  We search over \alert{dual} Lagrangian multipliers $\decisionvar{\lambda_i}(x)$, $\decisionvar{\sigma_{i,j}}(x)$.
+  But then what's the \alert{primal} \symvar{$x$} ? Isn't it the ``dual of the dual'' ?
 
   \begin{itemize}
-    \item The \alert{conic dual} is a symmetric \alert{positive semidefinite} matrix of \alert{moments}.
+    \item \alert{Conic} dual is a symmetric \alert{PSD} matrix of \emph{moments} $M_{\textcolor{julia_purple}{d}}$.
     \item Positive semidefiniteness \alert{necessary} but not \alert{sufficient}
-    for existence of a measure with these moments.
-    \item \alert{Flatness property} : Rank of truncation equal to rank of full
-    \item Flatness \alert{sufficient} condition for existence of an \alert{atomic}
+    for existence of a \emph{measure} with these \emph{moments}.
+    \item \alert{Flatness property} : Rank of \textcolor{julia_purple}{truncation} equal to rank of $M_{\textcolor{julia_purple}{d}}$
+    \item Flatness \alert{sufficient} condition for existence of an \emph{atomic}
     measure with these moments.
   \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Can you find the minimizer for the Goldstein-price function ?}
+  \vspace{-0.5em}
+  %\Wider{
+  \scriptsize
+  \begin{verbatim}
+MomentMatrix with row/column basis:
+ MonomialBasis([1, x[2], x[1], x[2]^2, x[1]*x[2], x[1]^2, x[2]^3, x[1]*x[2]^2,
+ x[1]^2*x[2], x[1]^3, x[2]^4, x[1]*x[2]^3, x[1]^2*x[2]^2, x[1]^3*x[2], x[1]^4])
+And entries in a 15×15 SymMatrix{Float64}:
+  0.999999      -0.999999       4.381387e-7  …    1.004378e-8
+ -0.999999       0.999999      -4.374988e-7         5.650864e-7
+  4.381387e-7   -4.374988e-7    2.282174e-9         9.580218e-7
+  0.999999      -0.999999       4.381366e-7         0.001309
+ -4.374973e-7    4.381360e-7    4.364830e-10        0.001473
+  2.280602e-9    4.350399e-10   3.053123e-9  …    0.002703
+ -0.999999       0.999999      -4.371625e-7         0.099747
+  4.381382e-7   -4.371629e-7    1.629694e-9         0.688158
+  4.349555e-10   1.628054e-9    3.198895e-9         0.497798
+  3.053181e-9    3.199220e-9    1.004332e-8         1.286501
+  0.999999      -0.999999       6.523214e-7  … 1766.382361
+ -4.371617e-7    6.523217e-7    2.263102e-7      -362.739066
+  1.628781e-9    2.263096e-7    4.378267e-7      2468.848686
+  3.198388e-9    4.378288e-7    5.650866e-7       691.956682
+  1.004378e-8    5.650864e-7    9.580218e-7      4051.055429
+  \end{verbatim}
+
+  \vspace{-2em}
+
+  {
+  \tiny
+  \alert{Heuristic} from Eq~(6.15) of Laurent, M. (2009). \emph{Sums of squares, moment matrices and optimization over polynomials}
+  }
+\end{frame}
+
+\begin{frame}{JuMP interface has all we need}
+  \begin{block}{Rounding moment matrices}
+    No flatness ? Try \alert{heuristic} rounding (like MIP for fractional)
+  \end{block}
+
+  \begin{block}{Reporting solution}
+    \begin{itemize}
+      \item \texttt{ObjectiveBound}: Sum-of-Squares certified bound
+      \item \texttt{ResultStatusCode}: \texttt{FEASIBLE\_POINT}, \texttt{INFEASIBLE\_POINT}
+      \item Sort \alert{multiple} solutions by status then objective value
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Stateful optimizer object better than one-shot function}
+    \begin{itemize}
+      \item \alert{P}-time solver but \alert{exp}onential size increase with degree
+      \item By default, \texttt{optimize!} solves one degree
+      \item Next \texttt{optimize!} climbs one degree of hierarchy
+    \end{itemize}
+  \end{block}
+%
+%
+%  % TODO Laurent
+%  Heuristically find solutions, you might want to share
+%
+%  Multiple solutions
+%
+%  Feasible status
+%
+%  optimize! does one step, solutions are concatenated
+\end{frame}
+
+
 \begin{frame}{Polynomial Optimization Interface}
+  \Wider{
   \begin{center}
-  \begin{tikzpicture}[scale = 0.9, every node/.style={scale=0.6}]
+  \begin{tikzpicture}[scale = 0.9, every node/.style={scale=0.7}]
     \node[function] (SNF) at (0, 0) {\texttt{MOI.ScalarNonlinearFunction}};
-    \node[solver] (LOC) at (-4, -2) {Local solver};
-    \node[function] (SPF) at ( 4, -2) {\texttt{PolyJuMP.ScalarPolynomialFunction}};
-    \node[function] (SQF) at (-4, -4) {\texttt{MOI.ScalarQuadraticFunction}};
+    \node[solver] (LOC) at (-4.5, -2) {Local solver};
+    \node[function] (SPF) at ( 3, -2) {\texttt{PolyJuMP.ScalarPolynomialFunction}};
+    \node[function] (SQF) at (-4.5, -4) {\texttt{MOI.ScalarQuadraticFunction}};
     \node[optimizer] (SOS) at ( 0, -4) {\texttt{SumOfSquares.Optimizer}};
     \node[optimizer] (KKT) at ( 4, -4) {\texttt{PolyJuMP.KKT.Optimizer}};
-    \node[solver] (QCQ) at (-4, -6) {QCQP solver};
+    \node[solver] (QCQ) at (-4.5, -6) {QCQP solver};
     \node[solver] (CON) at ( 0, -6) {Conic solver};
     \node[alg] (ALG) at ( 4, -6) {\jlpkg{SemialgebraicSets} solver};
     \draw[thick, ->] (SNF.south west) to (LOC.north east);
     \draw[thick, ->] (SNF.south east) to (SPF.north);
     \draw[bend right=20, thick, ->] (SPF.west) to (SQF.north east);
-    \draw[bend right=20, thick, ->] (SPF.south west) to (SOS.north);
+    \draw[thick, ->] (SPF.south west) to (SOS.north);
     \draw[thick, ->] (SPF.south)      to (KKT.north);
     \draw[thick, ->] (SQF.south)      to (QCQ.north);
     \draw[thick, ->] (SOS.south)      to (CON.north);
     \draw[thick, ->] (KKT.south)      to (ALG.north);
   \end{tikzpicture}
   \end{center}
+  }
+\end{frame}
+
+\begin{frame}{A bridge that can fail}
+  \begin{block}{Is that an issue ?}
+    \texttt{MOI.ScalarNonlinearFunction} $\to$
+      \texttt{MOI.ScalarPolynomialFunction} may \alert{fail}, e.g., for $exp(x)$.
+  \end{block}
+
+  \uncover<2->{
+    \begin{block}{We already have that}
+      \texttt{MOI.Bridges.Constraint.QuadtoSOCBridge}
+      \alert{fails} if quadratic form not PSD.
+    \end{block}
+  }
+
+  \uncover<3->{
+    \begin{block}{And we want to continue}
+      \texttt{MOI.ScalarNonlinearFunction} to
+      conic with DCP
+      \alert{fails} if nonlinear expression not DCP.
+    \end{block}
+  }
+
+  \uncover<4>{
+    \begin{block}{User chooses the solver, no default solver}
+      \vspace{0.6em}
+      \begin{columns}
+        \begin{column}{0.55\textwidth}
+      These bridges are the \textcolor{julia_green}{only} hope,
+      so they are allowed to \alert{fail}.
+        \end{column}
+        \begin{column}{0.3\textwidth}
+          \includegraphics[trim=20em 20em 20em 25em, clip, width=0.8\textwidth]{/home/blegat/Dropbox/Research/Images/last_hope.jpg}
+        \end{column}
+      \end{columns}
+      \vspace{0.1em}
+    \end{block}
+  }
 \end{frame}
 
 \begin{frame}{Complementarity between Macaulay and Moment matrices}
@@ -239,12 +364,12 @@
       \hline
       & Moment matrix & Macaulay matrix\\
       \hline
-      Relies on & \textcolor{lichen}{Conic solver} & \textcolor{lichen}{SVD}\\
-      Fixed $d$ & \textcolor{lichen}{Polynomial} & \textcolor{lichen}{Polynomial}\\
-      Growing $d$ & \textcolor{frambo}{Exponential} & \textcolor{frambo}{Exponential}\\
-      & \textcolor{lichen}{Real radical} & \textcolor{frambo}{Spurious complex solutions}\\
-      & \textcolor{lichen}{Complementary slackness} & \textcolor{frambo}{Spurious FOCPs}\\
-      & \textcolor{frambo}{Low-accuracy system} & \textcolor{lichen}{Numerically robust}\\
+      Relies on & \textcolor{julia_green}{Conic solver} & \textcolor{julia_green}{SVD}\\
+      Fixed $\textcolor{julia_purple}{d}$ & \textcolor{julia_green}{Polynomial} & \textcolor{julia_green}{Polynomial}\\
+      Growing $\textcolor{julia_purple}{d}$ & \textcolor{julia_red}{Exponential} & \textcolor{julia_red}{Exponential}\\
+      $M_{\textcolor{julia_purple}{d}}$& \textcolor{julia_green}{Real radical} & \textcolor{julia_red}{Spurious complex solutions}\\
+      $M_{\textcolor{julia_purple}{d}}$& \textcolor{julia_green}{Complementary slackness} & \textcolor{julia_red}{Spurious FOCPs}\\
+      $M_{\textcolor{julia_purple}{d}}$& \textcolor{julia_red}{Low-accuracy system} & \textcolor{julia_green}{Numerically robust}\\
       \hline
     \end{tabular}
   \end{center}
@@ -265,34 +390,34 @@
     \node[box] (MUL) at (9, 2) {\begin{minipage}{6em}\centering Multiplication Matrix\end{minipage}};
     \draw[bend left=20, thick, ->] (OPT.north east) to node[above] {\jlpkg{SumOfSquares}} (MH.north west);
     \draw[thick, ->] (OPT.south east) to node[rotate=-83, below] {\jlpkg{PolyJuMP} -- KKT} (SYS.north west);
-    \draw[color=canard, thick, ->] (MH.south west) to node[rotate=80, below] {Image~\autocite{lasserre2008semidefinite}} (NULL.north east);
+    \draw[color=julia_blue, thick, ->] (MH.south west) to node[rotate=80, below] {Image~\autocite{lasserre2008semidefinite}} (NULL.north east);
     %\draw[thick, bend left=30, ->] (NULL.south west) to node[above=0.3em] {\alert{\textbf{Hankel}}} (MH.south east);
     %\draw[bend left=30, thick, ->] (SYS.north) to node[rotate = 90, above] {Sum-of-Squares~\autocite{lasserre2008semidefinite}\footpartcite{lasserre2008semidefinite}} (MH.south);
     %\draw[bend left=30, thick, ->] (MH.south) to node[rotate = 90, above]{SVD~\autocite{lasserre2008semidefinite}} (SYS.north);
     %\draw[bend left = -30, thick, ->] (NULL.south west) to node[above,rotate=65] {Lukas ?} (SYS.north east);
-    \draw[color=frambo, thick, ->] (SYS.north) to
+    \draw[color=julia_red, thick, ->] (SYS.north) to
     %node[below,rotate=90] {Macaulay~\autocite{dreesen2012back}}
     (MacMat.south west);
-    \draw[color=frambo, thick, ->] (MacMat.south east) to node[below,rotate=-83] {Kernel} (NULL.north west);
+    \draw[color=julia_red, thick, ->] (MacMat.south east) to node[below,rotate=-83] {Kernel} (NULL.north west);
     %\draw[thick, ->] (NULL.south) to node[rotate=-90, above] {Row Echelon~\autocite{dreesen2012back}~\autocite{henrion2005detecting}\footpartcite{henrion2005detecting}} (BB.north);
     %\draw[bend left=30, thick, ->] (NULL.south) to (SYS.north east);
     %\draw[bend right=30, thick, ->] (NULL.south) to (BB.north west);
-    \draw[color=canard, thick, -] (NULL.south) to (4.5, -1);
-    \draw[color=canard, thick, ->] (4.5, -1) to (SYS.north east);
-    \draw[color=canard, thick, ->] (4.5, -1) to (BB.north west);
-    \draw[color=aurore, thick, ->] (SYS.east) to node[below] {\jlpkg{Groebner} -- Faug\`ere's F4} (BB.west);
-    \draw[color=lichen, dashed, thick, ->] (SYS.east) to node[color=lichen, above] {Buchberger} (BB.west);
-    \draw[color=canard, thick, -] (BB.north east) to (MUL.south west);
-    \draw[color=lichen, dashed, thick, ->] (BB.north east) to (MUL.south west);
-    \draw[color=canard, thick, ->] (MH.north east) to node[above] {Flatness} (MUL.north west);
-    \draw[color=canard, thick, ->] (NULL.east) to node[rotate=35, below] {Mind the gap!} (MUL.west);
+    \draw[color=julia_blue, thick, -] (NULL.south) to (4.5, -1);
+    \draw[color=julia_blue, thick, ->] (4.5, -1) to (SYS.north east);
+    \draw[color=julia_blue, thick, ->] (4.5, -1) to (BB.north west);
+    \draw[color=julia_purple, thick, ->] (SYS.east) to node[below] {\jlpkg{Groebner} -- Faug\`ere's F4} (BB.west);
+    \draw[color=julia_green, dashed, thick, ->] (SYS.east) to node[color=julia_green, above] {Buchberger} (BB.west);
+    \draw[color=julia_blue, thick, -] (BB.north east) to (MUL.south west);
+    \draw[color=julia_green, dashed, thick, ->] (BB.north east) to (MUL.south west);
+    \draw[color=julia_blue, thick, ->] (MH.north east) to node[above] {Flatness} (MUL.north west);
+    \draw[color=julia_blue, thick, ->] (NULL.east) to node[rotate=35, below] {Mind the gap!} (MUL.west);
     %\draw[thick, ->] (NULL.south east) to node[rotate=-66, above] {Shift~\autocite{dreesen2012back}\footpartcite{dreesen2012back}} (MUL.north west);
     %\draw[bend right = 120, thick, ->] (NULL.east) to node[rotate=-25, above] {Lukas ?} (NULL.north);
-    \draw[color=lichen, thick, ->] (MUL.south) to node[rotate=-70, below] {Schur~\autocite{corless1997reordered}\footpartcite{corless1997reordered}} (SOL.north);
+    \draw[color=julia_green, thick, ->] (MUL.south) to node[rotate=-70, below] {Schur~\autocite{corless1997reordered}\footpartcite{corless1997reordered}} (SOL.north);
     \draw[bend right = 10, thick, ->] (SYS.south) to node[below] {\jlpkg{HomotopyContinuation}} (SOL.south west);
-    \node[pkg, dashed, color=canard, fill=canard!5] at (8, 3) {\jlpkg{MultivariateMoments}};
-    \node[pkg, dashed, color=lichen, fill=lichen!5] at (9.2, -2.9) {\jlpkg{SemialgebraicSets}};
-    \node[pkg, dashed, color=frambo, fill=frambo!5] at (1.2, -2.9) {\jlpkg{Macaulay}};
+    \node[pkg, dashed, color=julia_blue, fill=julia_blue!5] at (8, 3) {\jlpkg{MultivariateMoments}};
+    \node[pkg, dashed, color=julia_green, fill=julia_green!5] at (9.2, -2.9) {\jlpkg{SemialgebraicSets}};
+    \node[pkg, dashed, color=julia_red, fill=julia_red!5] at (1.2, -2.9) {\jlpkg{Macaulay}};
   \end{tikzpicture}
   \end{center}
 \end{frame}
