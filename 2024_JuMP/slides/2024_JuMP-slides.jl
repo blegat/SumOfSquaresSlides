@@ -55,6 +55,12 @@ frametitle("Sampling basis and rank 1 constraint")
 frametitle("Non-polynomial basis : CHSH inequality")
 
 
+# ╔═╡ d7cdae04-cd08-4aeb-bff8-b9dc59006df0
+frametitle("Image vs Kernel")
+
+# ╔═╡ b89904aa-1ca6-4684-b000-913d2adf6bac
+md"Explicit thanks to `Dualization.jl`"
+
 # ╔═╡ 8c5e54d0-0d77-44f2-bced-eb510915eed2
 md"""
 # Utilities
@@ -818,6 +824,8 @@ version = "3.5.0+0"
 # ╟─d1895efa-3657-414a-b459-ea208d01a4d3
 # ╟─ba4139ab-bc8b-4a0a-a44d-222d41cba4e3
 # ╟─08f3d492-5b5a-414c-bb3b-281ff346ca71
+# ╟─d7cdae04-cd08-4aeb-bff8-b9dc59006df0
+# ╟─b89904aa-1ca6-4684-b000-913d2adf6bac
 # ╟─8c5e54d0-0d77-44f2-bced-eb510915eed2
 # ╠═5dd90313-98f8-47b3-a216-97a78822674f
 # ╠═d0d5f8a7-c8f1-44f3-b013-58e84af16cde
