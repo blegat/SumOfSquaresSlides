@@ -12,7 +12,7 @@ endif
 PDF_NAME=$(MAIN_NAME).pdf
 
 # You want latexmk to *always* run, because make does not have all the info.
-.PHONY: $(PDF_NAME) clean show release
+.PHONY: $(PDF_NAME) clean show
 
 # If you want the pdf to be opened by your preferred pdf viewer
 # after `$ make', comment the following line and uncomment the
@@ -43,22 +43,3 @@ clean:
 
 show: $(PDF_NAME)
 	$(PDFVIEWER) $(PDF_NAME) 2> /dev/null &
-
-publish: $(PDF_NAME)
-	cp $(PDF_NAME) ~/Dropbox/Research/$(NAME)
-
-release:
-	if [ -a config.yml ] ; \
-	then \
-		python3 ~/git/smartcp/smartcp.py --google-drive -vvvvv config.yml ; \
-	else \
-		cp $(MAIN_NAME).pdf ~/gdrive/Research/$(TYPE)/$(NAME).pdf; \
-		drive push ~/gdrive/Research/$(TYPE)/$(NAME).pdf; \
-	fi;
-ifdef PDFNAME
-	if ! [ -a config.yml ] ; \
-	then \
-		cp $(MAIN_NAME).pdf "/home/blegat/gdrive/Research benoit et raph/Final versions/$(PDFNAME).pdf"; \
-		drive push "/home/blegat/gdrive/Research benoit et raph/Final versions/$(PDFNAME).pdf"; \
-	fi;
-endif
