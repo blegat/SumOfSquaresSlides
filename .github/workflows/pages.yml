@@ -1,0 +1,66 @@
+name: Build and publish presentations
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: presentations-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install LaTeX and bibliography tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-latex-extra texlive-fonts-extra texlive-science \
+            texlive-bibtex-extra biber ghostscript python3-pygments
+      - name: Compile slides and poster
+        run: python3 scripts/build_pages.py
+      - name: Save LaTeX logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation-logs
+          path: |
+            _build/**/*.log
+            _build/**/*.blg
+      - name: Save presentation site
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation-site
+          path: _site/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  deploy:
+    if: github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download presentation site
+        uses: actions/download-artifact@v4
+        with:
+          name: presentation-site
+          path: _site
+      - name: Publish to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: _site

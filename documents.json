@@ -1,0 +1,92 @@
+[
+  {
+    "name": "2017_JuMP",
+    "directory": "2017_JuMP/slides",
+    "main": "2017_JuMP-slides.tex",
+    "title": "Sum-of-squares optimization in Julia"
+  },
+  {
+    "name": "2018_NCAG",
+    "directory": "2018_NCAG/poster",
+    "main": "2018_NCAG-poster.tex",
+    "title": "Sum-of-Squares Programming in Julia with JuMP (poster)"
+  },
+  {
+    "name": "2019_EURO",
+    "directory": "2019_EURO/slides",
+    "main": "2019_EURO-slides.tex",
+    "title": "JuMP and MathOptInterface: An optimization framework extensible by design"
+  },
+  {
+    "name": "2019_JCON",
+    "directory": "2019_JCON/slides",
+    "main": "2019_JCON-slides.tex",
+    "title": "Polynomial and Moment Optimization in Julia and JuMP"
+  },
+  {
+    "name": "2019_LANL",
+    "directory": "2019_LANL/slides",
+    "main": "2019_LANL-slides.tex",
+    "title": "Automatic reformulation using optimization bridges"
+  },
+  {
+    "name": "2019_NANT",
+    "directory": "2019_NANT/slides",
+    "main": "2019_NANT-slides.tex",
+    "title": "JuMP extension to Sum-of-Squares Programming"
+  },
+  {
+    "name": "2020_INFORMS",
+    "directory": "2020_INFORMS/slides",
+    "main": "2020_INFORMS-slides.tex",
+    "title": "SumOfSquares: A Julia package for Polynomial Optimization"
+  },
+  {
+    "name": "2021_INFORMS",
+    "directory": "2021_INFORMS/slides",
+    "main": "2021_INFORMS-slides.tex",
+    "title": "Symmetry Reduction in Semidefinite Optimization"
+  },
+  {
+    "name": "2021_JuMP",
+    "directory": "2021_JuMP/slides",
+    "main": "2021_JuMP-slides.tex",
+    "title": "Symmetry reduction for Sum-of-Squares programming"
+  },
+  {
+    "name": "2021_POEMA",
+    "directory": "2021_POEMA/slides",
+    "main": "2021_POEMA-slides.tex",
+    "title": "Sum-of-Squares optimization with JuMP in Julia"
+  },
+  {
+    "name": "2022_ICM_Computational_Math",
+    "directory": "2022_ICM_Computational_Math/slides",
+    "main": "2022_ICM_Computational_Math-slides.tex",
+    "title": "Positivity, symmetry and semi-definite optimization"
+  },
+  {
+    "name": "2022_INFORMS",
+    "directory": "2022_INFORMS/slides",
+    "main": "2022_INFORMS-slides.tex",
+    "title": "Symmetry Reduction for Sum-of-Squares Optimization"
+  },
+  {
+    "name": "2023_JuMP",
+    "directory": "2023_JuMP/slides",
+    "main": "2023_JuMP-slides.tex",
+    "title": "Polynomial Optimization (JuMP-dev 2023)"
+  },
+  {
+    "name": "2023_Julia",
+    "directory": "2023_Julia/slides",
+    "main": "2023_Julia-slides.tex",
+    "title": "Polynomial Optimization (Julia and Optimization Days 2023)"
+  },
+  {
+    "name": "2023_SIAMDS",
+    "directory": "2023_SIAMDS/slides",
+    "main": "2023_SIAMDS-slides.tex",
+    "title": "Exploiting the Structure of a Polynomial Optimization Problem"
+  }
+]

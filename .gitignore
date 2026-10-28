@@ -17,3 +17,6 @@ _minted*
 *.pyg
 *.synctex.gz
 *-blx.bib
+
+_build/
+_site/
