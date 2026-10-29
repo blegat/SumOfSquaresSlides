@@ -15,19 +15,25 @@ SITE = ROOT / '_site'
 
 def build(document):
     output = ROOT / '_build' / document['name']
-    output.mkdir(parents=True, exist_ok=True)
+    if output.exists():
+        shutil.rmtree(output)
+    # Keep the source tree's depth so ../../images and shared macros still resolve.
+    # Build in place in this copy: minted v2 cannot find files in a separate outdir.
+    shutil.copytree(ROOT / document['directory'], output)
     env = os.environ.copy()
     env['TEXINPUTS'] = f'.:{ROOT}:{ROOT}/images:' + env.get('TEXINPUTS', '')
     env['BIBINPUTS'] = f'.:{ROOT}:' + env.get('BIBINPUTS', '')
     with (output / 'build.log').open('w') as log:
         result = subprocess.run(
             ['latexmk', '-norc', '-pdf', '-shell-escape', '-interaction=nonstopmode',
-             '-halt-on-error', '-file-line-error', f'-outdir={output}', document['main']],
-            cwd=ROOT / document['directory'], env=env,
+             '-halt-on-error', '-file-line-error', document['main']],
+            cwd=output, env=env,
             stdout=log, stderr=subprocess.STDOUT, timeout=600,
         )
     if result.returncode:
-        print(f"FAIL {document['name']}: {output / 'build.log'}", flush=True)
+        log_path = output / 'build.log'
+        excerpt = '\n'.join(log_path.read_text(errors='replace').splitlines()[-80:])
+        print(f"FAIL {document['name']}: {log_path}\n{excerpt}", flush=True)
         return False
     pdf = output / Path(document['main']).with_suffix('.pdf')
     shutil.copyfile(pdf, SITE / (document['name'] + '.pdf'))

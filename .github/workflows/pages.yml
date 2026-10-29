@@ -25,7 +25,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             latexmk texlive-latex-extra texlive-fonts-extra texlive-science \
-            texlive-bibtex-extra biber ghostscript python3-pygments
+            texlive-bibtex-extra texlive-plain-generic texlive-lang-french \
+            lmodern biber ghostscript python3-pygments
       - name: Compile slides and poster
         run: python3 scripts/build_pages.py
       - name: Save LaTeX logs
