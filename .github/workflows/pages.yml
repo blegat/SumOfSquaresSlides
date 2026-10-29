@@ -27,6 +27,9 @@ jobs:
             latexmk texlive-latex-extra texlive-fonts-extra texlive-science \
             texlive-bibtex-extra texlive-plain-generic texlive-lang-french \
             lmodern biber ghostscript python3-pygments
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1"
       - name: Compile slides and poster
         run: python3 scripts/build_pages.py
       - name: Save LaTeX logs

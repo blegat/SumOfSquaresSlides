@@ -14,7 +14,10 @@ To build every presentation locally, install the LaTeX packages listed in
 python3 scripts/build_pages.py
 ```
 
-`documents.json` lists the main files and the titles displayed on the index.
+`index.md` contains the presentation catalogue. Main files named
+`<year>_<event>-slides.tex` or `<year>_<event>-poster.tex` are compiled
+automatically from the corresponding `slides/` or `poster/` directory.
+Julia is required to render the Markdown catalogue.
 Compiled PDFs and `index.html` go to `_site/`; build logs go to `_build/`.
 Presentations compile in copies under `_build/` so both minted v2 and v3
 can find their generated highlighting files.
